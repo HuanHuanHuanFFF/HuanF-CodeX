@@ -1,12 +1,7 @@
 #include <bits/stdc++.h>
-// #define x first
-// #define y second
 using namespace std;
 
 using ll = long long;
-constexpr int MOD = 1e9 + 7;
-constexpr int INF = 1e9 + 17;
-constexpr int N = 1e7 + 7;
 
 struct BIT {
     int n;
