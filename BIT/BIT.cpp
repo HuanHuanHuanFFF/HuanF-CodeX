@@ -2,11 +2,12 @@
 using namespace std;
 using ll = long long;
 
+template<typename T>
 struct BIT {
     int n;
-    vector<ll> t;
+    vector<T> t;
 
-    explicit BIT(int n): n(n), t(vector<ll>(n + 1)) {
+    explicit BIT(int n): n(n), t(vector<T>(n + 1)) {
     }
 
     int lowbit(int x) { return x & -x; }
