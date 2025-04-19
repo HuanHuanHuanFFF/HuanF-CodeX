@@ -40,6 +40,8 @@ void IOS() {
     cout.tie(nullptr);
 }
 
+// https://www.luogu.com.cn/problem/P3372
+// 解释见 P3372.md
 signed main() {
     IOS();
     int n, m;
@@ -62,7 +64,7 @@ signed main() {
             d1.add(y + 1, -k);
             d2.add(x, (x - 1) * k);
             d2.add(y + 1, -y * k);
-        } else cout << d1.pre_sum(y) * y - d1.pre_sum(x - 1) * (x - 1) - d2.pre_sum(y) + d2.pre_sum(x - 1) << "\n";
+        } else cout << d1.pre_sum(y)*y - d2.pre_sum(y) - (d1.pre_sum(x-1)*(x-1) - d2.pre_sum(x-1)) << "\n";
     }
     return 0;
 }
