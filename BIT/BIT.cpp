@@ -28,7 +28,7 @@ struct BIT {
         return ans;
     }
 
-    //查询区间和
+    //查询闭区间和
     ll query(int l, int r) {
         return pre_sum(r) - pre_sum(l - 1);
     }

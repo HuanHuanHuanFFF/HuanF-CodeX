@@ -1,16 +1,13 @@
 #include <bits/stdc++.h>
-#define x first
-#define y second
-
 using namespace std;
 using ll = long long;
-using PII = pair<int, int>;
 
+template<typename T>
 struct BIT {
     int n;
-    vector<ll> t;
+    vector<T> t;
 
-    explicit BIT(int n): n(n), t(vector<ll>(n + 1)) {
+    explicit BIT(int n): n(n), t(vector<T>(n + 1)) {
     }
 
     int lowbit(int x) { return x & -x; }
@@ -31,7 +28,7 @@ struct BIT {
         return ans;
     }
 
-    //查询区间和
+    //查询闭区间和
     ll query(int l, int r) {
         return pre_sum(r) - pre_sum(l - 1);
     }
@@ -43,21 +40,31 @@ void IOS() {
     cout.tie(nullptr);
 }
 
+/*
+ *
+ */
 signed main() {
     IOS();
     int n;
     ll ans = 0;
     cin >> n;
-    vector<PII> a(n);
-    BIT b(n);
+    vector<int> a(n);
+    for (auto &x: a) cin >> x;
+    vector<int> b = a;
+    sort(b.begin(), b.end());
+    //同一个值必须映射到同一个位置,所以必须去重
+    b.erase(unique(b.begin(), b.end()), b.end());
+    int m = b.size();
+    //建立映射
     for (int i = 0; i < n; ++i) {
-        cin >> a[i].x;
-        a[i].y = i + 1;
+        a[i] = lower_bound(b.begin(), b.end(), a[i]) - b.begin() + 1;
     }
-    sort(a.begin(), a.end());
-    for (auto [num,ind]: a) {
-        ans += b.query(ind + 1, n);
-        b.add(ind, 1);
+    BIT<int> bit_L(m), bit_R(m);
+    for (auto &ind: a) bit_R.add(ind, 1);
+    for (int i = 0; i < n; ++i) {
+        bit_R.add(a[i], -1);
+        ans += bit_L.pre_sum(a[i] - 1) * bit_R.query(a[i] + 1, m);
+        bit_L.add(a[i], 1);
     }
     cout << ans;
 }
