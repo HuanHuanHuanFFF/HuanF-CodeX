@@ -41,7 +41,8 @@ void IOS() {
 }
 
 /*
- *
+ * https://www.luogu.com.cn/problem/P1637
+ * 这种做法使用乘法原理
  */
 signed main() {
     IOS();
@@ -63,7 +64,7 @@ signed main() {
     for (auto &ind: a) bit_R.add(ind, 1);
     for (int i = 0; i < n; ++i) {
         bit_R.add(a[i], -1);
-        ans += bit_L.pre_sum(a[i] - 1) * bit_R.query(a[i] + 1, m);
+        ans += bit_L.pre_sum(a[i] - 1) * bit_R.query(a[i] + 1, m);//乘法原理
         bit_L.add(a[i], 1);
     }
     cout << ans;
