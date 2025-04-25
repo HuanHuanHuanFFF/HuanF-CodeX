@@ -35,8 +35,10 @@ struct D2BIT {
     }
 
     //查询区间和
-    ll query(int start_x, int start_y, int end_x, int end_y) {
-        return pre_sum(start_x - 1, start_y - 1) + pre_sum(end_x, end_y)
-               - pre_sum(start_x - 1, end_y) - pre_sum(start_x, end_y - 1);
+    ll query(int sx, int sy, int ex, int ey) {
+        return pre_sum(ex, ey)
+             - pre_sum(sx - 1, ey)
+             - pre_sum(ex, sy - 1)
+             + pre_sum(sx - 1, sy - 1);
     }
 };
