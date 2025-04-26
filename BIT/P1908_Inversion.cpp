@@ -42,7 +42,9 @@ void IOS() {
     cin.tie(nullptr);
     cout.tie(nullptr);
 }
-
+/*
+ * 详见BIT_Inversion.md
+ */
 signed main() {
     IOS();
     int n;
