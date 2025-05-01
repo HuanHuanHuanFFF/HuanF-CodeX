@@ -27,6 +27,15 @@ void IOS() {
     cout.tie(nullptr);
 }
 
+/* ABC400-D
+ * link: https://atcoder.jp/contests/abc400/tasks/abc400_d
+ * 思路:
+ * 1 构建图: 每个格子为节点
+ * 2 四邻域为权值0边(road)
+ * 3 跨1-2格遇墙或目标为墙为权值1边(kick)
+ * 4 用0-1 BFS维护deque: 0权头插,1权尾插
+ * 5 hit数组记录到各节点最小踢数
+ */
 void HuanF() {
     int h, w;
     cin >> h >> w;
@@ -54,20 +63,26 @@ void HuanF() {
             return;
         }
         auto x = z / w, y = z % w;
-        for (int i = 0; i < 4; ++i) {
-            int nx = x + dx[i], ny = y + dy[i];
-            if (nx >= 0 && nx < h && ny >= 0 && ny < w && hit[nx][ny] > hit[x][y]) {
-                if (g[nx][ny] == 1) {
-                    int nnx = x + dx[i] * 2, nny = y + dy[i] * 2;
-                    if (nnx >= 0 && nnx < h && nny >= 0 && nny < w) {
-                        dq.push_back(nnx * w + nny);
-                        hit[nnx][nny] = hit[x][y] + 1;
+        for (int i = 0; i < 4; i++) {
+            bool wall = false;
+            // 试两步 step=1,2
+            for (int j = 1; j <= 2; j++) {
+                int nx = x + dx[i] * j;
+                int ny = y + dy[i] * j;
+                if (nx < 0 || nx >= h || ny < 0 || ny >= w)break;
+                if (g[nx][ny] == 1)wall = true;
+                if (!wall) {
+                    if (j == 1) {
+                        if (hit[nx][ny] > hit[x][y]) {
+                            hit[nx][ny] = hit[x][y];
+                            dq.push_front(nx * w + ny);
+                        }
                     }
-                    dq.push_back(nx * w + ny);
-                    hit[nx][ny] = hit[x][y] + 1;
                 } else {
-                    hit[nx][ny] = hit[x][y];
-                    dq.push_front(nx * w + ny);
+                    if (hit[nx][ny] > hit[x][y] + 1) {
+                        hit[nx][ny] = hit[x][y] + 1;
+                        dq.push_back(nx * w + ny);
+                    }
                 }
             }
         }
