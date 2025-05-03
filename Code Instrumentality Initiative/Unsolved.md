@@ -37,3 +37,25 @@
 4. 答案为 `sum(dp[n][k][t]) (0≤t<|s|) mod 998244353`
 
 时间复杂度 O(26·n·k)，空间可用滚动数组优化到 O(k·|s|)  
+
+### E. Forbidden Prefix
+
+**link**：https://atcoder.jp/contests/abc403/tasks/abc403_e  
+**标签**：字符串、Trie、动态维护、前缀
+
+**简单思路**：
+
+1. 用 Trie 存储所有已插入到 X 的字符串，节点维护：
+   - `next[26]`：子节点指针
+   - `f`：标记该节点是否为某个 X 字符串的终点
+   - `Zv`：存放经过该节点且尚未被判 bad 的 Y 字符串 ID 列表
+2. 插入 X (T=1)：
+   - 遍历 S 到达节点 u，设置 `f[u]=true`
+   - 遍历 `Zv[u]`，将对应 Y ID 标记为 bad 并 `badY++`，清空 `Zv[u]`
+3. 插入 Y (T=2)：
+   - 分配新 ID，沿 S 的路径遍历每个节点 u：
+      - 若 `f[u] == true`，立即标记该 Y 为 bad 并 `badY++`，停止遍历
+      - 否则将 Y ID 推入 `Zv[u]`
+   - `totalY++`
+4. 每次输出 `totalY - badY` 即当前合法的 Y 字符串数
+5. 时间复杂度 O(∑|S|)，空间复杂度 O(∑|S|)  
