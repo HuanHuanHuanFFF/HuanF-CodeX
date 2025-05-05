@@ -28,9 +28,9 @@ void HuanF() {
 signed main() {
     IOS();
     init();
-    int T;
-    cin >> T;
-    while (T-- > 0)
-        HuanF();
+//    int T;
+//    cin >> T;
+//    while (T-- > 0)
+    HuanF();
     return 0;
 }
