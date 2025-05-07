@@ -36,6 +36,7 @@ void init() {
 void HuanF() {
     int n;
     cin >> n;
+    int ansX = 0, ansY = 0;
     std::map<int, int> x_cnt, plus_cnt;
     // x_cnt 记录每个 x 坐标的灯泡数量
     // plus_cnt 记录每条对角线 x+y 的灯泡数量
@@ -44,7 +45,6 @@ void HuanF() {
         ++x_cnt[x];
         ++plus_cnt[x + y];
     }
-    int ansX = 0, ansY = 0;
     for (auto &[x,c]: x_cnt) {
         if (c & 1) {
             ansX = x;
@@ -60,11 +60,25 @@ void HuanF() {
     cout << ansX << " " << ansY << "\n";
 }
 
+// 偷看hmm代码发现的,太巧妙了,我必须偷来
+void solve() {
+    int n;
+    cin >> n;
+    int ansX = 0, ansS = 0;
+    for (int i = 0, x, y; i < n; ++i) {
+        cin >> x >> y;
+        ansX ^= x;
+        ansS ^= x + y;
+    }
+    cout << ansX << " " << ansS - ansX << "\n";
+}
+
 signed main() {
     init();
     int T;
     cin >> T;
     while (T-- > 0)
-        HuanF();
+        solve();
+    // HuanF();
     return 0;
 }
