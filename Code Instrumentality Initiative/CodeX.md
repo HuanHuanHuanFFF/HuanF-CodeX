@@ -415,3 +415,20 @@ link: [https://codeforces.com/contest/2096/problem/D](https://codeforces.com/con
 ---
 **时间复杂度**：$O(n\log n)$（map 统计）
 **空间复杂度**：$O(n)$
+
+
+# E. Wonderful泰迪熊
+
+link: [https://codeforces.com/contest/2096/problem/E](https://codeforces.com/contest/2096/problem/E)
+
+**标签**：逆序对、贪心、模2不变、位置统计
+
+**本质思路**
+将“黑熊(B)”视作 0，“粉熊(P)”视作 1，目标排序变为二进制数组升序。
+
+1. 统计逆序对数 $x$：每个 1 与其右侧所有 0 构成逆序。
+2. 统计总 0 数 $a$ 及偶数位 0 数 $b$，目标偶数位放 0 数为 $\lfloor a/2
+   floor$，差值为 $d$。
+3. 需要 $d$ 次能改偶位的操作(A/C)，每次减 1 个逆序；剩余逆序数 $(x-d)$ 用 B/D 每次减 2。
+4. 最终最少操作数 $(x+d)/2$。
+
