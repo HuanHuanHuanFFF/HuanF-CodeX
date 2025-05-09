@@ -519,7 +519,7 @@ link: [https://codeforces.com/contest/2096/problem/E](https://codeforces.com/con
 
 已思考 15 秒
 
-# E. Start of the season
+# E. 异构矩阵
 
 **link**：[https://codeforces.com/contest/12/problem/E](https://codeforces.com/contest/12/problem/E)
 
