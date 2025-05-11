@@ -59,3 +59,18 @@
    - `totalY++`
 4. 每次输出 `totalY - badY` 即当前合法的 Y 字符串数
 5. 时间复杂度 O(∑|S|)，空间复杂度 O(∑|S|)  
+
+# H.  土卫十六
+
+**link**：[https://codeforces.com/contest/2094/problem/H](https://codeforces.com/contest/2094/problem/H)
+**标签**：数论、因子枚举、二分查找、数据结构
+
+**简单思路**：
+
+1. 预处理：用 `vector<vector<int>> pos` 记录每个值在原数组中出现的下标（升序）。
+2. 对于每次查询 `(k, l, r)`，枚举 `k` 的所有因子 `d`（可预先计算或 √(k) 现场枚举）。
+3. 对每个因子 `d`，在 `pos[d]` 上用 `lower_bound` 找到第一个 ≥ `l` 的下标 `idx`，若 `idx ≤ r`，则视为事件 `(idx, d)`。
+4. 将所有事件按 `idx` 升序排序，维护 `cur = k`、`prev = l` 和答案 `ans = 0`：
+
+   * 对每个事件 `(idx, d)`：先累加 `(idx - prev) * cur`，再在 `idx` 处将 `cur` 中所有 `d` 因子除尽，更新 `prev = idx`。
+5. 最后累加剩余区间 `[prev, r]` 的贡献 `(r - prev + 1) * cur`，输出 `ans`。
