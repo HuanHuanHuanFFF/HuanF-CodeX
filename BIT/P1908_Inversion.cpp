@@ -42,6 +42,7 @@ void IOS() {
     cin.tie(nullptr);
     cout.tie(nullptr);
 }
+
 /*
  * 详见BIT_Inversion.md
  */
@@ -50,6 +51,35 @@ signed main() {
     int n;
     ll ans = 0;
     cin >> n;
+    // 这段是归并排序的做法,没树状数组快
+    // auto merge = [](auto &&self, vector<int> &a, int l, int r)-> ll {
+    //     ll ans = 0;
+    //     if (l != r) {
+    //         int mid = l + r >> 1;
+    //         ans += self(self, a, l, mid);
+    //         ans += self(self, a, mid + 1, r);
+    //         int i = l, j = mid + 1;
+    //         vector<int> t;
+    //         t.reserve(r - l + 1);
+    //         while (i <= mid && j <= r) {
+    //             if (a[i] <= a[j]) {
+    //                 t.push_back(a[i]);
+    //                 ++i;
+    //             } else {
+    //                 t.push_back(a[j]);
+    //                 ++j;
+    //                 ans += mid - i + 1;
+    //             }
+    //         }
+    //         while (i <= mid) t.push_back(a[i++]);
+    //         while (j <= r) t.push_back(a[j++]);
+    //         for (int k = 0; k < t.size(); ++k) a[l + k] = t[k];
+    //     }
+    //     return ans;
+    // };
+    // vector<int> a(n);
+    // for (auto &x: a) cin >> x;
+    // cout << merge(merge, a, 0, n - 1);
     vector<PII> a(n);
     BIT b(n);
     for (int i = 0; i < n; ++i) {
