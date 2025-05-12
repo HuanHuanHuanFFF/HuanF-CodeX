@@ -513,12 +513,6 @@ link: [https://codeforces.com/contest/2096/problem/E](https://codeforces.com/con
 * 时间：O(n√n)（直径长度逐轮下降轮数 = O(√n)，每轮 BFS/DFS 扫描子树）或 O(n log n)（用优先队列优化）
 * 空间：O(n)
 
-**生成Codex条目**
-
-用户想要将问题E（《赛季开始》）录入Codex，并且强调按之前提供的模板来处理。根据之前的要求，在Markdown格式中，应该包括标题、链接、标签、本质思路和关键步骤部分。务必确保注释代码在其他部分之前，便于复制粘贴。生成Markdown时，避免添加过多代码，仅注重综述内容。
-
-已思考 15 秒
-
 # E. 异构矩阵
 
 **link**：[https://codeforces.com/contest/12/problem/E](https://codeforces.com/contest/12/problem/E)
@@ -558,14 +552,6 @@ link: [https://codeforces.com/contest/2096/problem/E](https://codeforces.com/con
 * 时间：$\displaystyle O(n^2)$ （填充 $\tfrac{n(n-1)}2$ 条边）
 * 空间：$\displaystyle O(n^2)$（矩阵存储）
 
-**写入 Codex**
-
-根据用户的要求，我需要将解决方案按指定的格式写入 Codex。它要求使用特定的 Markdown 格式，包括问题编号、标题和详细的思路、步骤描述。同时，我需要引用相应的链接，并填写问题的标签、关键步骤等详细信息。这个格式在背景教程中已经给出了模板，包括如“**本质思路**”、“**关键步骤**”和“整体复杂度”之类的部分。我会确保按照这些指示来写 Codex 条目。
-
-
-已思考 14 秒
-
-
 # P3758 可乐
 
 **link**：[https://www.luogu.com.cn/problem/P3758](https://www.luogu.com.cn/problem/P3758)
@@ -581,9 +567,9 @@ link: [https://codeforces.com/contest/2096/problem/E](https://codeforces.com/con
    构造大小为 $(n+1)\times(n+1)$ 的邻接矩阵 $A$，其中节点 $0$ 表示“已自爆”状态，节点 $1\ldots n$ 表示各城市。
 2. **构造边**
 
-   * 对于每条道路 $u\!-\!v$，设置 $A[u][v]=A[v][u]=1$。
-   * 对每个城市 $i$ 设置自环 $A[i][i]=1$ 表示停留不动；设置 $A[i][0]=1$ 表示随时可以自爆；
-   * 设置 $A[0][0]=1$ 保证自爆后不可逆。
+    * 对于每条道路 $u\!-\!v$，设置 $A[u][v]=A[v][u]=1$。
+    * 对每个城市 $i$ 设置自环 $A[i][i]=1$ 表示停留不动；设置 $A[i][0]=1$ 表示随时可以自爆；
+    * 设置 $A[0][0]=1$ 保证自爆后不可逆。
 3. **矩阵快速幂**
    对矩阵 $A$ 进行快速幂运算，计算出 $A^t \bmod 2017$。
 4. **汇总答案**
@@ -594,3 +580,119 @@ link: [https://codeforces.com/contest/2096/problem/E](https://codeforces.com/con
    $$
 
 整体复杂度：$O(n^3\log t)$，空间复杂度：$O(n^2)$ 。
+
+# P2587 \[ZJOI2008] 泡泡堂
+
+**link**：[https://www.luogu.com.cn/problem/P2587](https://www.luogu.com.cn/problem/P2587)
+
+**标签**：贪心、排序、双指针、田忌赛马
+
+**简单思路**：
+
+1. 将浙江队和对手的实力数组各自升序排序；
+2. 定义函数 `solve(a,b)` 计算我方（`a`）对阵对方（`b`）的得分：
+3. 最好情况：`best = solve(a, b)`；
+4. 最坏情况：对调双方再解一次，`worst = solve(b, a)`，此时对手得分为 `worst`，浙江队得分就是 `2*n - worst`；
+5. 输出 `best` 和 `2*n - worst`。
+
+**复杂度**：
+
+* 总体：$O(n\log n)$时间，$O(n)$ 空间。
+
+# G. 眩晕香蕉
+
+**link**：[https://codeforces.com/contest/2094/problem/G](https://codeforces.com/contest/2094/problem/G)
+
+**标签**：双端队列、模拟、数据结构、数学推导、常数更新
+
+**本质思路**
+用一个 `deque` 结合方向标记 `head` 模拟三种持久化操作，维护四个状态变量：
+
+* `s`：正向粗糙度 $f(n)=\sum_{i=1}^n a_i\cdot i$
+* `rs`：反向粗糙度 $g(n)=\sum_{i=1}^n a_i\cdot(n+1-i)$
+* `sum`：数组元素之和
+* `head`：布尔标记，`true` 表示当前 `deque` 正向，`false` 表示逻辑翻转
+
+通过数学推导，可在 $O(1)$ 时间更新这四个量，无需每次遍历或真正翻转数组
+
+**关键步骤**
+
+1. **操作1：循环移位**（把末尾元素移到前端）
+
+    * 令 `an = head ? a.back() : a.front()`
+    * 更新正向粗糙度：
+
+      $$
+      s \;+=\; sum \;-\; an \times \text{size}
+      $$
+    * 更新反向粗糙度：
+
+      $$
+      rs \;+=\; an \times \text{size} \;-\; sum
+      $$
+    * 在 `deque` 上根据 `head` 弹出对应端并从另一端插入 `an`
+2. **操作2：反转数组**
+
+    * 交换 `s` 与 `rs`
+    * 切换方向标记：`head = !head`
+3. **操作3：尾部插入 $x$**
+
+    * `sum += x`
+    * 更新正向粗糙度：
+
+      $$
+      s \;+=\; (\,\text{size}+1)\times x
+      $$
+    * 更新反向粗糙度：
+
+      $$
+      rs \;+=\; sum
+      $$
+    * 在 `deque` 末端（或逻辑末端）插入 `x`
+
+整体时间复杂度 $O(q)$，空间复杂度 $O(q)$
+
+# F. 和弦交叉
+
+**link**：https://atcoder.jp/contests/abc405/tasks/abc405_f
+
+**标签**：离线算法、Fenwick 树（BIT）、区间统计、排序
+
+**本质思路**  
+将“弦与查询弦交叉”的二维判定转换为：
+
+- 统计区间内端点总数 \(E\)；
+- 统计左端在区间外、右端在区间内的弦数 \(P\)（激活式离线 + BIT）；  
+  通过公式 \( ext{交叉数} = E - 2P\) 快速得到结果。
+
+**关键步骤**
+
+1. **端点前缀和**
+    - 建 `mark[1…2N]`，遍历所有弦 \((a,b)\) 时对 `mark[a]++`,`mark[b]++`。
+    - 计算前缀 `pre[i] = mark[1] + … + mark[i]`，区间 \((u,v)\) 内端点数 \(E = pre[v-1] - pre[u]\)。
+
+2. **离线排序**
+    - 将已知弦按左端 \(a\) 降序；将所有查询按左端 \(u\) 降序。
+    - 保证在处理查询 \((u,v)\) 时，所有 \(a>u\) 的弦都已“激活”。
+
+3. **Fenwick 树维护**
+    - 初始化 BIT 大小为 \(2N\)。
+    - 依次扫描弦数组：当弦 \((a,b)\) 满足 \(a>u\) 时，执行 `bit.add(b,1)`，将其右端点“激活”。
+
+4. **查询激活数**
+    - 对当前查询 \((u,v)\)，用 `P = bit.pre_sum(v-1)` 统计所有激活弦中 `b < v` 的数量。
+
+5. **合并答案**
+    - 交叉弦总数 = \(E - 2P\)。
+    - 恢复查询顺序输出。
+
+---
+
+**复杂度分析**
+
+- 时间：\(O((M+Q)\log(2N))\)
+- 空间：\(O(N)\)
+
+> **技巧总结**：
+> - 「一侧离线排序 + 另一侧 BIT 前缀和」是处理“区间内外落点”交叉计数的常用套路。
+> - 利用端点总数扣除完全包含情况，化简交叉统计。
