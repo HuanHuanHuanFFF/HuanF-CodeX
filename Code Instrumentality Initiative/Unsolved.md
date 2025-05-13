@@ -36,7 +36,7 @@
     - `dp[i+1][j+(nt==|s|)][t′] += dp[i][j][t]`
 4. 答案为 `sum(dp[n][k][t]) (0≤t<|s|) mod 998244353`
 
-时间复杂度 O(26·n·k)，空间可用滚动数组优化到 O(k·|s|)  
+时间复杂度 O(26·n·k)，空间可用滚动数组优化到 O(k·|s|)
 
 ### E. Forbidden Prefix
 
@@ -46,21 +46,21 @@
 **简单思路**：
 
 1. 用 Trie 存储所有已插入到 X 的字符串，节点维护：
-   - `next[26]`：子节点指针
-   - `f`：标记该节点是否为某个 X 字符串的终点
-   - `Zv`：存放经过该节点且尚未被判 bad 的 Y 字符串 ID 列表
+    - `next[26]`：子节点指针
+    - `f`：标记该节点是否为某个 X 字符串的终点
+    - `Zv`：存放经过该节点且尚未被判 bad 的 Y 字符串 ID 列表
 2. 插入 X (T=1)：
-   - 遍历 S 到达节点 u，设置 `f[u]=true`
-   - 遍历 `Zv[u]`，将对应 Y ID 标记为 bad 并 `badY++`，清空 `Zv[u]`
+    - 遍历 S 到达节点 u，设置 `f[u]=true`
+    - 遍历 `Zv[u]`，将对应 Y ID 标记为 bad 并 `badY++`，清空 `Zv[u]`
 3. 插入 Y (T=2)：
-   - 分配新 ID，沿 S 的路径遍历每个节点 u：
-      - 若 `f[u] == true`，立即标记该 Y 为 bad 并 `badY++`，停止遍历
-      - 否则将 Y ID 推入 `Zv[u]`
-   - `totalY++`
+    - 分配新 ID，沿 S 的路径遍历每个节点 u：
+        - 若 `f[u] == true`，立即标记该 Y 为 bad 并 `badY++`，停止遍历
+        - 否则将 Y ID 推入 `Zv[u]`
+    - `totalY++`
 4. 每次输出 `totalY - badY` 即当前合法的 Y 字符串数
-5. 时间复杂度 O(∑|S|)，空间复杂度 O(∑|S|)  
+5. 时间复杂度 O(∑|S|)，空间复杂度 O(∑|S|)
 
-# H.  土卫十六
+# H. 土卫十六
 
 **link**：[https://codeforces.com/contest/2094/problem/H](https://codeforces.com/contest/2094/problem/H)
 **标签**：数论、因子枚举、二分查找、数据结构
@@ -72,5 +72,36 @@
 3. 对每个因子 `d`，在 `pos[d]` 上用 `lower_bound` 找到第一个 ≥ `l` 的下标 `idx`，若 `idx ≤ r`，则视为事件 `(idx, d)`。
 4. 将所有事件按 `idx` 升序排序，维护 `cur = k`、`prev = l` 和答案 `ans = 0`：
 
-   * 对每个事件 `(idx, d)`：先累加 `(idx - prev) * cur`，再在 `idx` 处将 `cur` 中所有 `d` 因子除尽，更新 `prev = idx`。
+    * 对每个事件 `(idx, d)`：先累加 `(idx - prev) * cur`，再在 `idx` 处将 `cur` 中所有 `d` 因子除尽，更新 `prev = idx`。
 5. 最后累加剩余区间 `[prev, r]` 的贡献 `(r - prev + 1) * cur`，输出 `ans`。
+
+### E. 水果排列
+
+**link
+**：[https://atcoder.jp/contests/abc405/tasks/abc405\_e?lang=en](https://atcoder.jp/contests/abc405/tasks/abc405_e?lang=en)
+
+**标签**：组合数学、偏序计数、分界枚举、组合数
+
+**简单思路**：
+
+1. 设 $N = A + B + C + D$，水果总数。
+2. 枚举“最右苹果”所在位置 $i$，合法范围：$A \le i \le A + B$。
+3. 左侧前 $i-1$ 个位置放置其余 $A-1$ 个苹果和 $B$ 个橘子，方案数：
+
+   $$
+   \binom{i-1}{A-1}
+   $$
+4. 右侧后 $N - i$ 个位置放置 $C$ 个香蕉和 $D$ 个葡萄，方案数：
+
+   $$
+   \binom{N - i}{C}
+   $$
+5. 对所有 $i$ 累加左右方案数乘积，取模 $998244353$：
+
+   $$
+   \sum_{i=A}^{A+B} \binom{i-1}{A-1} \times \binom{N - i}{C} \bmod 998244353
+   $$
+
+* 时间复杂度：$O(N)$ 预处理 + $O(B)$ 枚举
+* 空间复杂度：$O(N)$
+
