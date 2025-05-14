@@ -54,11 +54,12 @@ int query(int x, int y) {
 查询 \((x_1, y_1)\) 到 \((x_2, y_2)\) 的矩阵和：
 
 ```cpp
-int sum(int x1, int y1, int x2, int y2) {
-    return query(x2, y2) - query(x1 - 1, y2) 
-                         - query(x2, y1 - 1) 
-                         + query(x1 - 1, y1 - 1);
-}
+    ll query(int sx, int sy, int ex, int ey) {
+        return pre_sum(ex, ey)
+               - pre_sum(sx - 1, ey)
+               - pre_sum(ex, sy - 1)
+               + pre_sum(sx - 1, sy - 1);
+    }
 ```
 
 ## Extension - 多用途拓展（4 BIT 技巧）
