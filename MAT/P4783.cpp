@@ -1,8 +1,22 @@
+//
+// Created by 幻 on 2025/5/15.
+//
 #include <bits/stdc++.h>
+
 using namespace std;
 
 using ll = long long;
 constexpr int MOD = 1e9 + 7;
+
+void IOS() {
+    std::ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+}
+
+void init() {
+    IOS();
+}
 
 struct MAT {
     int n, m;
@@ -133,3 +147,30 @@ struct MAT {
         return true;
     }
 };
+
+
+void HuanF() {
+    int n;
+    cin >> n;
+    MAT ans(n, n);
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j <= n; ++j) {
+            cin >> ans(i, j);
+        }
+    }
+    if (ans.invert()) {
+        ans.print();
+    } else {
+        cout << "No Solution";
+    }
+
+}
+
+signed main() {
+    init();
+    int T = 1;
+    //    cin >> T;
+    while (T-- > 0)
+        HuanF();
+    return 0;
+}
