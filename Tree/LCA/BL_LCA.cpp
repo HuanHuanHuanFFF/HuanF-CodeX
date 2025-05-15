@@ -8,8 +8,7 @@ struct BL_LCA {
     vector<vector<int> > up; // up[k][u] = u 的 2^k 级祖先
     const vector<vector<int> > &g;
 
-    BL_LCA(int _n, const vector<vector<int> > &_g)
-        : n(_n), g(_g) {
+    BL_LCA(int _n, const vector<vector<int> > &_g): n(_n), g(_g) {
         LOG = __lg(n) + 1;
         depth.assign(n + 1, 0);
         up.assign(LOG, vector<int>(n + 1, 0));
