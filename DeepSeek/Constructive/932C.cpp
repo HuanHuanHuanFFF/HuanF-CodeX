@@ -26,7 +26,16 @@ void init() {
     IOS();
 }
 
-// C. Permutation Cycle
+/* 932C-PermutationCycle
+ * link: https://codeforces.com/problemset/problem/932/C
+ * 思路:
+ * 1. 将原题等价为在 N 个元素中划分若干个长度为 A 和 B 的环，使得总和为 N
+ * 2. 枚举 x（环中长度为 A 的个数），令 y = (N - A*x) / B，检查是否整除得到非负解
+ * 3. 若无解则输出 -1 并返回
+ * 4. 否则依次构造 x 个 A 长环和 y 个 B 长环
+ *    对于每个环 [l, …, r]，输出 r, l, l+1, …, r-1，实现元素向后“旋转”一位，形成所需周期
+ * 5. 整体遍历和输出操作均为 O(N) 时间，额外使用 O(1) 空间
+ */
 void HuanF() {
     ll n, a, b;
     cin >> n >> a >> b;
