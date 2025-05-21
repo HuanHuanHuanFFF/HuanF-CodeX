@@ -954,3 +954,153 @@ link: https://codeforces.com/problemset/problem/67/B
 3. 最终输出 `ans[1..n]`。
 
 复杂度：$O(n^2)$。
+
+# G. 斯拉夫骑自行车
+
+**link**：[https://codeforces.com/contest/1915/problem/G](https://codeforces.com/contest/1915/problem/G)
+
+**标签**：图论、最短路、Dijkstra、状态扩展
+
+**本质思路**
+将「城市编号」和「当前持有自行车的迟缓因子」作为联合状态，用扩展后的 Dijkstra 在状态图上求最短时间。
+
+**关键步骤**
+
+1. **状态定义**
+   定义
+   $\mathrm{dist}[u][k]$
+   为到达城市 $u$ 且持有迟缓因子为 $k$ 的自行车时的最短时间。
+
+2. **初始化**
+
+    * 将所有 $\mathrm{dist}[u][k]$ 置为 $\infty$，
+    * 令 $\mathrm{dist}[1][s_1]=0$，并把状态 $(1,\,s_1)$ 入最小堆。
+
+3. **状态转移**
+   每次从堆中弹出当前最小的 $\mathrm{dist}[u][k]$，若已标记访问则跳过；否则遍历所有邻边 $(u\to v,\,w)$：
+
+    * 计算可选的新迟缓因子
+
+      $$
+      k'=\min\bigl(k,\;s_v\bigr)
+      $$
+    * 骑行代价
+
+      $$
+      \Delta = w \times k
+      $$
+    * 松弛条件
+
+      $$
+      \text{如果}\;\mathrm{dist}[v][k']>\mathrm{dist}[u][k]+\Delta
+      \;\text{则更新}\;
+      \mathrm{dist}[v][k']=\mathrm{dist}[u][k]+\Delta
+      $$
+
+      并将 $(v,\,k')$ 推入堆。
+
+4. **答案提取**
+   最终在城市 $n$ 所有可能的迟缓因子上取最小值：
+
+   $$
+   \min_{1\le k\le S_{\max}}\;\mathrm{dist}[n][k]
+   $$
+
+---
+
+**复杂度分析**
+
+* 状态数 $O(n\times S)$，其中 $S_{\max}\le1000$
+* 边数 $m\le1000$
+* Dijkstra 时间约为 $O(mS\log(nS))$，空间 $O(nS)$
+  均在题目约束下可行。
+
+# P1273 有线电视网
+
+link: [https://www.luogu.com.cn/problem/P1273](https://www.luogu.com.cn/problem/P1273)
+
+**标签**：树形DP、01背包、DFS
+
+**本质思路**
+把每棵分支视为「选或不选」两种状态：选则统一扣一次整个分支费用，不选则保留原 `dp`；在叶子处按体积为 1 的 0/1 背包插包。使用一维数组
+`dp[i]` 记录恰选 \$i\$ 个用户时的最大净收益。
+
+**关键步骤**
+
+1. **DP 定义**
+   一维数组 `dp[0…m]`，
+   $dp[i] = \max\{\text{选 }i\text{ 个用户的净收益}\}.$
+
+2. **初始化**
+   `dp[0] = 0`，`dp[i] = -inf`
+
+3. **DFS 合并子树**
+   对节点 $x$ 的每个子节点 $y$（边费 $c$），依次执行：
+
+    * 备份：`tot = dp`
+    * 扣费：`for i = 0…m if dp[i] > -∞ then dp[i] -= c`
+    * 递归：`dfs(y)`
+    * 恢复：`for i = 0…m dp[i] = max(dp[i], tot[i])`
+
+4. **叶子插包**
+   对叶子（支付 $w$）01背包：
+   `for i = m…1 if dp[i-1] > -∞ then dp[i] = max(dp[i], dp[i-1] + w)`
+
+5. **取答案**
+   DFS 完成后，在根节点的 `dp` 中，从 $m$ 向下找到第一个
+   $dp[i] \ge 0$
+   的 $i$ 即为最大可选用户数。
+
+# P2585 三色二叉树
+
+link: [https://www.luogu.com.cn/problem/P2585](https://www.luogu.com.cn/problem/P2585)
+
+**标签**：树形DP、二叉树、状态枚举
+
+**本质思路**  通过递归把前序字符串解析成二叉树，然后在树上做后序DP，对每个节点和每种颜色状态分别记录子树内最多与最少绿色数，最后在根节点三种颜色中取最优。
+
+**关键步骤**
+
+1. **建树**
+   前序序列含义：
+
+    * `0`：叶节点
+    * `1S`：单子树，用 `1` 标记，接下来解析一个子树
+    * `2S1S2`：双子树，用 `2` 标记，接着解析左右子树
+      维护指针 `i` 和下一个索引 `nxt`，递归读取字符并把新节点的下标加入父 `child` 列表。
+
+2. **状态定义**
+   对每个节点 `u`，及颜色 `c∈{0,1,2}`（0=红,1=绿,2=蓝），维护：
+
+    * `dp_max[u][c]`：在 `u` 子树里给 `u` 涂色 `c` 时的**最多**绿色数
+    * `dp_min[u][c]`：在 `u` 子树里给 `u` 涂色 `c` 时的**最少**绿色数
+      自身是否绿色通过 `(c==1)?1:0` 计入。
+
+3. **后序DP**
+
+   ```text
+   dfs(u):
+     if u 无子：
+       dp_max[u][c]=dp_min[u][c]=(c==1)
+       return
+     if u 只有一个子 v：
+       dfs(v)
+       dp_max[u][c]=(c==1)+max{dp_max[v][d] | d≠c}
+       dp_min[u][c]=(c==1)+min{dp_min[v][d] | d≠c}
+       return
+     // 两个子 v1,v2：
+     dfs(v1), dfs(v2)
+     dp_max[u][c]=(c==1)+max{dp_max[v1][d1]+dp_max[v2][d2] | d1≠c,d2≠c,d1≠d2}
+     dp_min[u][c]=(c==1)+min{dp_min[v1][d1]+dp_min[v2][d2] | 同上}
+   ```
+
+4. **答案**
+   在根节点 `1`，取：
+
+    * 最多绿色 = `max(dp_max[1][0], dp_max[1][1], dp_max[1][2])`
+    * 最少绿色 = `min(dp_min[1][0], dp_min[1][1], dp_min[1][2])`
+
+---
+
+**时间复杂度**：O(n)；**空间复杂度**：O(n)
+
