@@ -1104,3 +1104,123 @@ link: [https://www.luogu.com.cn/problem/P2585](https://www.luogu.com.cn/problem/
 
 **时间复杂度**：O(n)；**空间复杂度**：O(n)
 
+# P3047. 距离K内树上权值和
+
+link: [https://www.luogu.com.cn/problem/P3047](https://www.luogu.com.cn/problem/P3047)
+
+**标签**：树形 DP、换根 DP、DFS、二维状态
+
+**本质思路**
+对每个节点统计距离它恰好 d 的节点权重和，分为“子树内”（down）和“树外”（up）两部分，用两次 DFS（下 DP + 重根 DP）完成，最终合并得到距离小于等于
+K 的所有贡献。
+
+**关键步骤**
+
+1. **下 DP（dfs1）**
+
+    * 定义 `down[x][d]`：节点 x 子树内恰好距离 d 的节点权重和。
+    * 初始化：`down[x][0] = w[x]`。
+    * 递推：遍历子节点 y，对 1 <= d <= K，
+      `down[x][d] += down[y][d-1]`
+
+2. **重根 DP（dfs2）**
+
+    * 定义 `up[x][d]`：不在 x 子树内、恰好距离 d 的节点权重和。
+    * 根设 `up[r][d] = 0`（任选根 r）。
+    * 距离 1：
+      `up[y][1] = w[x]`
+    * 距离 d >= 2：
+      `up[y][d] = up[x][d-1] + (down[x][d-1] - down[y][d-2])`
+    * 解释：第一项是“先上到 x 再向上走 d-1 步”，第二项是“先上到 x 再向下走 d-1 步，但剔除进入 y 子树的部分”。
+
+3. **合并答案**
+   对每个节点 x 计算
+   `M[x] = sum_{d=0..K}(down[x][d] + up[x][d])`
+
+**时间复杂度**：O(N*K)；**空间复杂度**：O(N*K)。
+
+### C1. Hacking Numbers (Easy Version)
+
+**link**：[https://codeforces.com/contest/2042/problem/C1](https://codeforces.com/contest/2042/problem/C1)
+**标签**：交互、数位和、不变式、二分收敛
+
+**本质思路**
+
+1. **两次 `digit` 收敛**：任意初始 $x\in[1,10^9]$
+
+    * 第一次 `digit` 后 $x\in[1,81]$
+    * 第二次 `digit` 后 $x\in[1,16]$
+2. **二分式 `add -i`**：对 $i=8,4,2,1$ 依次尝试 `add -i`，将区间对半缩小，最终收敛到 1
+3. **加偏移**：`add n-1` 把 1 变为目标 $n$
+
+---
+
+### C2. Hacking Numbers (Medium Version)
+
+**link**：[https://codeforces.com/contest/2042/problem/C2](https://codeforces.com/contest/2042/problem/C2)
+**标签**：交互、数论、数字根、不变式
+
+**本质思路**
+
+1. `mul 9`：将任意 $x$ 映射到 9 的倍数
+2. `digit`：求数位和，$x\to9$
+3. `digit`：再次求数位和，不变仍为 $9$
+4. `add n-9`：把 9 调整到目标 $n$
+
+---
+
+### C3. Hacking Numbers (Hard Version)
+
+**link**：[https://codeforces.com/contest/2042/problem/C3](https://codeforces.com/contest/2042/problem/C3)
+**标签**：交互、数论、数字根、9 补码、不变式
+
+**本质思路**
+
+1. `mul 999999999`（$10^9-1$）：对任意 $x\le10^9$，有
+
+   $$
+   S\bigl((10^9-1)x\bigr) = 81
+   $$
+
+   通过十进制“9 的补码”拆分，保证数位和恒为 $9\times9=81$。
+2. `digit`：再次求数位和，不变仍为 $81$
+3. **条件执行**：若 $n\neq81$，执行 `add n-81`；若 $n=81$，可省略该步
+
+**命令数**：
+
+* $n=81$ 时 $f(81)=2$；
+* 其他 $n$ 时 $f(n)=3$。
+
+# D. D/D/D
+
+**link**：[https://codeforces.com/contest/1025/problem/D](https://codeforces.com/contest/1025/problem/D)
+**标签**：图论、BFS、双状态、子集和、奇偶性
+
+**本质思路**
+将“恰走 $k$ 步”归结为“最短距离＋奇偶校验”。
+
+* 预处理每个顶点到 1 的最短偶数步数 $\mathrm{dist}[i][0]$ 和最短奇数步数 $\mathrm{dist}[i][1]$。
+* 计算多重集 $A$ 的总和 $S=\sum_i a_i$ 及最小奇数票 $\mathrm{minOdd}=\min\{a_i\mid a_i\bmod2=1\}$。
+
+**关键步骤**
+
+1. **读入并统计**
+
+    * $S=\sum a_i$。
+    * 如果存在奇数，则 $\mathrm{minOdd}=\min\{a_i\mid a_i\%2=1\}$，否则 $\mathrm{minOdd}=\infty$。
+2. **双状态 BFS**
+
+    * 从状态 $(1,0)$ 入队：表示在顶点 1，已走步数模 2 为 0。
+    * 每沿一条边扩展，步数加 1 并翻转模 2 值，更新 $\mathrm{dist}[v][p\oplus1]$。
+3. **可达性判定**
+
+    * 令 $p = S\bmod2$，$q=1-p$。
+    * 顶点 $i$ 可达当且仅当
+
+        * $\mathrm{dist}[i][p]\le S$，或
+        * $\mathrm{dist}[i][q]\le S-\mathrm{minOdd}$。
+
+**复杂度**
+
+* 时间：$O(n+m+\ell)$
+* 空间：$O(n+m+\ell)$

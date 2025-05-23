@@ -39,7 +39,7 @@ void init() {
  *        • 若 dist[i][S%2] ≤ S，则存在总步数为 S（同奇偶）的 walk 到达 i
  *        • 否则若存在奇数元素且 dist[i][1−(S%2)] ≤ S−minOdd，则可用总步数 S−minOdd（翻转奇偶）到达
  *      若任一条件成立，则 i 可达
- * 时间复杂度：O(n + m + ℓ)  
+ * 时间复杂度：O(n + m + ℓ)
  * 空间复杂度：O(n + m + ℓ)
  */
 void HuanF() {
@@ -74,7 +74,7 @@ void HuanF() {
     vector<int> ans(n + 1);
     for (int i = 1; i <= n; ++i) {
         if (dis[i][sum % 2] <= sum) ans[i] = 1;
-        else if (odd < INF && dis[i][1 - sum % 2] <= sum - odd) ans[i] = 1;
+        else if (dis[i][1 - sum % 2] <= sum - odd) ans[i] = 1;
     }
     for (int i = 1; i <= n; ++i) cout << ans[i];
     cout << "\n";
