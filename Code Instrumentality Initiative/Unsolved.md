@@ -75,7 +75,7 @@
     * 对每个事件 `(idx, d)`：先累加 `(idx - prev) * cur`，再在 `idx` 处将 `cur` 中所有 `d` 因子除尽，更新 `prev = idx`。
 5. 最后累加剩余区间 `[prev, r]` 的贡献 `(r - prev + 1) * cur`，输出 `ans`。
 
-### E. 水果排列
+# E. 水果排列
 
 **link
 **：[https://atcoder.jp/contests/abc405/tasks/abc405\_e?lang=en](https://atcoder.jp/contests/abc405/tasks/abc405_e?lang=en)
@@ -105,3 +105,45 @@
 * 时间复杂度：$O(N)$ 预处理 + $O(B)$ 枚举
 * 空间复杂度：$O(N)$
 
+### F. Sums of Sliding Window Maximum
+
+**link**：https://atcoder.jp/contests/abc407/tasks/abc407_f  
+**标签**：单调栈、差分、前缀和、线性函数
+
+**问题简介：**
+给定一个长度为 $N$ 的非负整数序列 $A = (A_1, A_2, \dots, A_N)$。对于每个窗口长度 $k$（$1 \le k \le N$
+），计算序列中所有长度为 $k$ 的连续子数组的最大值之和，即输出：
+
+**简单思路**：
+
+1. 对每个下标 $i$：
+    - 用单调栈（一次从左往右、一次从右往左）求出  
+      $L_i$ = 左侧连续小于 $A_i$ 的长度，  
+      $R_i$ = 右侧连续小于 $A_i$ 的长度。
+2. 令 $x_{\min} = \min(L_i,R_i)$，$x_{\max} = \max(L_i,R_i)$。  
+   那么当窗口长度为 $k$ 时，$A_i$ 对答案的贡献是  
+   $$
+   \mathrm{cnt}_i(k)
+   =
+   \begin{cases}
+   k, & 1 \le k \le 1 + x_{\min},\\
+   1 + x_{\min}, & 1 + x_{\min} < k \le 1 + x_{\max},\\
+   2 + x_{\min} + x_{\max} - k, & 1 + x_{\max} < k \le 1 + x_{\min} + x_{\max},\\
+   0, & \text{其他}.
+   \end{cases}
+   $$
+   乘上常数 $A_i$，就得到对 $\mathrm{ans}[k]$ 的一次函数贡献。
+3. 为了把所有 $i$ 的贡献一次性叠加，用一个“二次差分”数组 `D2[$\,]`，对每个 $i$（设 $v = A_i$）在 `D2` 上做四次点更新：
+   ```
+   D2[ 1 ]                     += +v
+   D2[ 1 + x_min + 1 ]         += -v
+   D2[ 1 + x_max + 1 ]         += -v
+   D2[ 1 + x_min + x_max + 2 ] += +v
+   ```
+   这样就实现了三段一次函数在区间 $[1..N]$ 上的累加。
+4. 最后对 `D2` 做两次前缀和：
+    1. `D1[j] = D1[j-1] + D2[j]`
+    2. `ans[j] = ans[j-1] + D1[j]`  
+       得到 `ans[1..N]` 即为每个窗口长度 $k$ 的答案。
+
+整体时间复杂度 $O(N)$（包括单调栈 $O(N)$ + 差分更新 $O(N)$ + 两次前缀和 $O(N)$），空间复杂度 $O(N)$。
