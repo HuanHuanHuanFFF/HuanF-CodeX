@@ -1516,7 +1516,7 @@ link: [https://codeforces.com/problemset/problem/477/B](https://codeforces.com/p
 - 时间：$$O\bigl(T(n+m) + Q\log T\bigr)\approx O\bigl(35(n+m) + Q\cdot6\bigr).$$  
 - 空间：$$O(n\times T).$$
 
-# 2071C. 树上抓鼠
+# 2071C. 村上蠢鼠
 
 link: https://codeforces.com/contest/2071/problem/C
 
@@ -1544,3 +1544,274 @@ link: https://codeforces.com/contest/2071/problem/C
 
 - 时间复杂度：DFS/BFS $O(n)$ + 分桶与倒序遍历 $O(n)$，总 $O(n)$。
 - 空间复杂度：$O(n)$（邻接表 + 深度数组 + 分桶）。
+
+# P8774 爬树的甲壳虫
+
+link: https://www.luogu.com.cn/problem/P8774
+
+**标签**：期望DP、线性方程、模逆运算
+
+**题目简述**  
+甲壳虫从高度 0（树根）开始，想爬到高度 $n$（树顶）。当它尝试从高度 $i-1$ 到 $i$ 时，  
+- 以概率 $P_i=\dfrac{x_i}{y_i}$ 失败并回到根，  
+- 以概率 $1-P_i$ 成功到达 $i$。  
+每次尝试花费 1 单位时间。求爬到顶点的期望时间 $E$，对 $M=998244353$ 取模。
+
+---
+
+## 本质思路  
+- 令  
+  $$f[i]=\text{从根爬到高度 }i\text{ 的期望时间},\quad f[0]=0.$$
+- 对每个 $1\le i\le n$，写出状态方程：  
+  $$
+  f[i]
+    =(1-P_i)+f[i-1]
+    +P_i\bigl(f[i]+1\bigr).
+  $$
+- 移项得：  
+  $$
+  f[i]\,(1-P_i)=f[i-1]+1
+    \quad\Longrightarrow\quad
+    f[i]=\frac{f[i-1]+1}{1-P_i}.
+  $$
+- 使用费马小定理+快速幂计算逆元
+
+---
+
+## 关键步骤
+
+1. **初始化**  
+   设 $f[0]=0$。
+
+2. **预处理概率**  
+   对每个 $i$ 读取 $(x_i,y_i)$，  
+   计算 $\mathrm{den}^{-1}=(y_i - x_i)^{-1}\bmod M$。
+
+3. **正向 DP**  
+   对 $i=1\ldots n$：  
+   $$
+   f[i]
+     =\bigl(f[i-1]+1\bigr)\times y_i\times(y_i - x_i)^{-1}
+     \;\bmod M.
+   $$
+
+4. **输出**  
+   打印 $f[n]$。
+
+---
+
+**复杂度**  
+
+- 时间：$O(n\log M)$；  
+- 空间：$O(n)$（可滚动为 $O(1)$）。
+
+# K. 复合函数
+
+link: [https://codeforces.com/gym/103941/problem/K](https://codeforces.com/gym/103941/problem/K)
+
+**标签**: 功能图、基环树、整除判断、离线分桶、二分查找
+
+**题目简述**
+给定一个函数 $f: I_n \to I_n$，其中
+
+$$
+  I_n = \{\,1,2,\dots,n\},
+$$
+
+且图中每个节点的出度均为 1。还有 $q$ 组查询 $(a,b)$。
+询问满足
+
+$$
+  f^{\,a}(x) \;=\; f^{\,b}(x)
+$$
+
+的节点 $x$ 的个数，其中 $a,b \le 10^{18}$。
+
+---
+
+## 本质思路
+
+将函数图分解成若干棵 **基环树**：每棵基环树由
+
+* 一个长度为 $c$ 的**环**，以及
+* 环上每个节点向外挂出的若干棵倒挂树（树根在环上）。
+
+对于一个节点 $x$，我们要预处理以下两个值：
+
+1. $c_x$：节点 $x$ 所在的环的长度；
+2. $d_x$：节点 $x$ 到它所在环上最近节点的距离（深度）。
+
+令
+
+$$
+  \ell \;=\; \min(a,b), 
+  \qquad 
+  \Delta \;=\; |\,a - b\,|.
+$$
+
+那么
+
+$$
+  f^{\,a}(x) \;=\; f^{\,b}(x)
+  \quad\Longleftrightarrow\quad
+  \underbrace{\ell \;\ge\; d_x}_{\text{已进入环}}
+  \quad\wedge\quad
+  \underbrace{\Delta \bmod c_x \;=\; 0}_{\text{环上同余}}
+  \,.
+$$
+
+* 条件 $\ell \ge d_x$ 保证“从 $x$ 出发，走 $\ell$ 步时至少已经进到环里”。
+* 条件 $\Delta \bmod c_x = 0$ 保证“在环里多走 $\Delta$ 步时，仍然停在环上同一个位置”。
+
+如果 $a = b$，那么 $\Delta = 0$ 且 $\ell = a = b$。此时对于任意节点 $x$，都成立
+
+$$
+  f^{\,a}(x) \;=\; f^{\,b}(x),
+$$
+
+答案直接等于 $n$。
+
+---
+
+## 关键步骤
+
+### 1. 找环 + 标深度
+
+1. 使用“拓扑式 DFS/栈”或“白灰黑染色法”在出度为 1 的图里定位每个新环。
+2. 对环上节点标记深度 $d_x = 0$，环长度为 $c$；然后从环上的所有节点同时做一轮 BFS（沿倒挂树的入边向外走），将倒挂树中各节点的深度设置为它指向的父节点深度 +1。
+
+这样就能得到对每个 $x\in I_n$：
+
+$$
+  (\,c_x,\;d_x\,).
+$$
+
+### 2. 离线分桶
+
+把所有节点按“其环长”为键分到不同桶中：
+
+$$
+  \text{bucket}[\,c\,]
+  \;=\;\{\;d_x \mid c_x = c,\;x\in I_n\;\}.
+$$
+
+然后对每个桶内的深度序列进行升序排序，后续可以用 `upper_bound` 快速查询“有多少深度 $\le \ell$”。
+
+### 3. 回答查询
+
+* **若 $a = b$**，直接输出 $n$。
+* **否则**，计算
+
+  $$
+  \ell \;=\;\min(a,b), 
+    \quad 
+    \Delta \;=\;\bigl|\,a - b\,\bigr|.
+  $$
+
+  枚举 $\Delta$ 所有的正因子 $c \le n$。若 `bucket[c]` 存在，则对该桶中排序后的深度数组做
+
+  $$
+  \bigl|\{\,d \in \text{bucket}[c]\mid d\le \ell\}\bigr|
+    \;=\;
+    \text{upper\_bound}\bigl(\text{bucket}[c],\,\ell\bigr)\;-\;\text{begin}(\text{bucket}[c]).
+  $$
+
+  把这些计数累加，即得到本次查询的答案。
+
+> **注意**：枚举因子时只需枚举 $\Delta$ 的所有正因子并筛选出 $\le n$。因为 $\Delta\le 10^{18}$ 最坏也只需枚举到 $\min(\sqrt{\Delta},\,n)$，总体 $O(\sqrt{n})$。
+
+---
+
+## 整体复杂度
+
+1. **预处理**
+
+   * 找环 + 深度标记：$O(n)$。
+   * 离线分桶并排序：$\displaystyle \sum_{c}|\text{bucket}[c]|\log|\text{bucket}[c]|\;\le\;O(n\log n)$。
+     因此预处理总计 $O(n\log n)$。
+
+2. **每次查询**
+
+   * 枚举 $\Delta$ 的正因子：最坏 $O(\sqrt{n})$。
+   * 对其中每个合法的环长 $c$ 做一次二分：$O(\log n)$。
+     故单次查询约为 $O(\sqrt{n}\,\log n)$。
+     由于 $q \le 10^5$，整体可在 $O\bigl(q\,\sqrt{n}\,\log n\bigr)$ 内完成。
+
+---
+
+$$
+\boxed{
+  \text{预处理}\;O\bigl(n\log n\bigr), 
+  \quad
+  \text{单次查询}\;O\bigl(\sqrt{n}\,\log n\bigr).
+}
+$$
+
+- - # C. gcd替换
+  
+    link: https://codeforces.com/contest/1028/problem/C
+  
+    **标签**: 数论、gcd、动态规划
+  
+    **题目简述**
+     给定长度为 $n$ 的正整数数组 $a$，允许反复进行如下操作直到所有元素相等：
+  
+    > 选 $i \neq j$，令 $a_i := \gcd(a_i,,a_j)$。
+    >  求最少操作次数使得数组所有元素相同。
+  
+    ------
+  
+    ## 本质思路
+  
+    1. 任意 $\gcd$ 操作只会让当前元素收敛到原始值的一个因子，最后所有元素必然收敛到数组的全局 $\gcd$ 记为 $g$.
+    2. 因此先算出 $g = \gcd(a_1, a_2, \dots, a_n)$，再归一化 $b_i = a_i / g$，目标变为“让所有 $b_i$ 都变为 1”。
+    3. 若已有元素 $b_i = 1$（此时对应的 $a_i = g$），那么剩下的每个 $b_j > 1$ 直接和这个 1 做一次 $\gcd(b_j, 1) = 1$ 操作就能降到 1，总操作数 = $n - (\text{已有 }b_i = 1\text{ 的个数})$.
+    4. 若一开始没有任何 $b_i = 1$，则需要先“将某个元素从 $b_i > 1$ 一步步操作变成 1”——这部分用动态规划求最少步数 $\mathrm{dp}[1]$.
+    5. 再加上将其余 $n - 1$ 个元素各做一次 $\gcd(b_j, 1) = 1$ 的操作，总答案 = $(\mathrm{dp}[1] - 1) + (n - 1)$.
+       - 这里 $\mathrm{dp}[1] - 1$ 的 “−1” 是因为最后一步变到 1 后，不需要再向其他元素传播。
+  
+    ------
+  
+    ## 详细步骤
+  
+    1. **计算全局 $g$ 并归一化**
+  
+       - 用一次遍历累积 $g = \gcd(a_1, a_2, \dots, a_n)$.
+       - 对每个 $i$ 做 $b_i = a_i / g$.
+       - 统计 $\mathrm{cnt1} = |{,i \mid b_i = 1}|$.
+       - 如果 $\mathrm{cnt1} > 0$, 则输出 $n - \mathrm{cnt1}$ 并返回。
+  
+    2. **去重并确定最大值**
+  
+       - 对数组 $b$ 排序、去重后保存在 `unique_b` 中.
+       - 令 $\text{maxv} = \max(\mathrm{unique_b})$.
+       - 构造 DP 数组 `dp[0..maxv]`, 初始值全部设为 $\mathrm{INF}$.
+  
+    3. **初始化状态 $\mathrm{dp}[b_i] = 0$**
+  
+       - 因为如果某个元素恰好等于 $x = b_i$, 就无需操作即可“存在一个值为 $x$”。
+  
+    4. **从大到小枚举计算 $\mathrm{dp}[x]$**
+        对 $x = \text{maxv}\to 1$:
+  
+       ```cpp
+       for each y in unique_b {
+           int u = gcd(x, y);
+           dp[u] = min(dp[u], dp[x] + 1);
+       }
+       ```
+  
+       - 理由：若已知让某元素变成 $x$ 需要 $\mathrm{dp}[x]$ 步，那么再对 $x$ 做一次 $\gcd(x, y)$ 操作就可将其变成 $u = \gcd(x, y)$, 共计 $\mathrm{dp}[x] + 1$ 步。因为 $u < x$, 所以需先从大向小遍历。
+  
+    5. **获取先造出 1 所需的最少步数**
+  
+       - 令 `first1 = dp[1]`, 此时 `first1` 是“让某元素先变为 1”的最少操作。
+       - 若 `first1 = INF` 则理论不可能（题目保证可行），否则“先造1”需 `first1 - 1` 步。
+  
+    6. **合成最终答案**
+  
+       - “先造1”花费 `first1 - 1` 步；
+       - 然后剩下 $n - 1$ 个元素，每个与这个已为 1 的元素各做一次 $\gcd(x,1) = 1$, 共 $n - 1$ 步。
+       - 总操作数 = $(first1 - 1) + (n - 1) = first1 + n - 2$.
+       - 因为一开始 $\mathrm{cnt1} = 0$, 等价写为 $(first1 - 1) + (n - \mathrm{cnt1})$。
+  
