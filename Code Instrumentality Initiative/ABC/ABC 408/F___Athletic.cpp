@@ -87,7 +87,20 @@ private:
 };
 
 // AtCoder Beginner Contest 408 
-// F - Athletic
+/* F - Athletic
+ * link: https://atcoder.jp/contests/abc408/tasks/abc408_f
+ * 标签: 排列, 动态规划, 线段树
+ * 思路:
+ *  1. 输入 heights 是 1…n 的排列，用 p[h[i]] = i+1 记录高度到位置的映射
+ *  2. 定义 dp[i] = 从高度为 i 的脚手架开始的最大移动次数，按 i 从 1 到 n 递增计算
+ *  3. 用线段树维护已更新的 dp 值，索引为脚手架位置（1…n）：
+ *     - 若 i-D ≥ 1，则将 dp[i-D] 更新到线段树中位置 p[i-D]
+ *     - 查询区间 [ max(1, p[i]-r), min(n, p[i]+r) ] 的最大值 mx
+ *  4. 令 dp[i] = mx + 1
+ *  5. 答案为 dp 数组的最大值
+ *
+ * 时间复杂度 O(N log N)，空间复杂度 O(N)
+ */
 void HuanF() {
     int n, d, r;
     cin >> n >> d >> r;
