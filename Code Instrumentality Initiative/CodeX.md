@@ -1501,6 +1501,7 @@ link: [https://codeforces.com/problemset/problem/477/B](https://codeforces.com/p
 - 预计算所有节点、所有步数的最大乘积表 $dp[u][t]$，再对每个查询二分步数。
 
 **关键步骤**：  
+
 1. **确定最大步数 $T$**：  
    - 每步至少除以 $2$，最大体力 $10^9$ 需 $\le30$ 步，取 $T = 35$。  
 2. **DP 定义**：  
@@ -1908,4 +1909,124 @@ link: [https://codeforces.com/contest/1996/problem/E](https://codeforces.com/con
 4. **取模输出**。
 
 整体时间 O(n log n)、空间 O(n)，完美将原本 O(n²) 的两重枚举降至 O(n)。
+
+# F. 炸弹
+
+link: https://codeforces.com/contest/1996/problem/F
+
+**标签**: 二分查找、前$k$大、等差数列求和
+
+**题目简述**  
+给定长度为 $n$ 的数组 $a$、$b$ 和操作次数上限 $k$，初始得分为 0。每次选择下标 $i$，得分加上 $a_i$，然后更新 $a_i=\max(0,a_i-b_i)$。求最多能获得的总分。
+
+**本质思路**  
+1. 将所有操作值（$a_i, a_i-b_i, a_i-2b_i, \dots$）视作一个多重集合，目标是取出其中前 $k$ 大元素之和。
+2. 二分第 $k$ 大元素值 $x$：定义 $f(x)=\sum_i \max(0, \lfloor (a_i-x)/b_i\rfloor+1)$，即操作值大于等于 $x$ 的总次数。找到最大 $x$ 使得 $f(x) \ge k$。
+3. 对每个 $i$，若 $a_i \ge x$，令 $t=\lfloor (a_i-x)/b_i\rfloor+1$，则其前 $t$ 次操作值为等差数列 $a_i, a_i-b_i, \dots, a_i-(t-1)b_i$，求和公式为
+   $$\sum_{j=0}^{t-1}(a_i - j b_i) = t a_i - \frac{t(t-1)}{2} b_i,$$
+   累加到总分 $ans$ 并累加操作次数 $cnt+=t$。
+4. 如果 $cnt>k$，则多出的 $cnt-k$ 次操作值均等于 $x$，用
+   $$ans -= (cnt-k) \times x$$
+   去掉多余贡献。
+
+**关键步骤**  
+1. 读入 $a,b,k$。
+2. 二分查找 $x$，使用 check(x) 计算 $f(x)$。
+3. 累加所有 $\ge x$ 操作的等差和，并统计 $cnt$。
+4. 修正 $ans$ 去掉多算部分。
+
+**复杂度**  
+- 时间：$O(n \log M)$（$M\approx10^9$）。  
+- 空间：$O(n)$。
+
+# G. Omg Graph
+
+link: https://codeforces.com/contest/2117/problem/G
+
+**标签**: 带信息并查集、Kruskal、最小最大组合
+
+**题目简述**  
+无向连通带权图，路径代价定义为“路径最小边权 + 路径最大边权”。求 1 → n 所有路径里的最小代价。
+
+**本质思路**  
+按权升序遍历边（Kruskal 思路）并维护并查集：根结点记录当前连通块已出现的最小边权。处理每条边 $(u,v,w)$ 时
+1. 设两端根为 $r_u,r_v$，并先算块内新的最小值 $m=\min(\text{mn}[r_u],\text{mn}[r_v],w)$；
+2. 合并两块，根置为 $r$，写 $\text{mn}[r]=m$；
+3. 若此时 $1$ 与 $n$ 已连通，则候选答案为 $\text{mn}[r]+w$；用 ans 取全局最小。
+遍历完所有边输出 ans。
+
+**关键步骤**  
+- **根信息只在 merge 合并**；`find` 仅路径压缩。
+- 遇到“内部边”（两端已同块）也要用 $w$ 更新根最小值。
+- 不提前 break，后续更大的 $w$ 仍可能配合更小的 $\text{mn}$ 给出更优解。
+
+**复杂度**  
+$O(m\log m)$（排序）+ 近乎 $O(m\alpha(n))$（并查集），空间 $O(n)$。
+
+# D. Graph and Graph
+
+link: [https://codeforces.com/contest/2059/problem/D](https://codeforces.com/contest/2059/problem/D)
+
+**标签**: 状态图最短路、笛卡尔积、Dijkstra、贪心剪枝
+
+**题目简述**
+两张同阶连通无向图，各有一枚标记起始于 $s_1,s_2$。
+一次操作：在图 1 选邻点 $u_1$，在图 2 选邻点 $u_2$，代价 $|u_1-u_2|$。
+无限次操作求 **总代价最小**，若无法使总代价有限输出 −1。
+
+---
+
+**本质思路**
+
+1. **安全点判定**
+   若存在公共边 $(v,u)$ 于两图，则状态 $(v,v)$ 可在该边往返，后续代价为 0。
+   记满足此条件的顶点 $v$ 为 *good*。问题化为：
+
+   > 起点 $(s_1,s_2)$ **能否**、以及 **以何最小代价** 到达某一 *good* 状态 $(v,v)$。
+2. **状态图建模**
+
+   * 顶点：所有有序对 $(x,y)$，共 $n^2$。
+   * 边：$(x,y)\to(u,v)$ 当且仅当 $x\sim u$(G₁邻接)，$y\sim v$(G₂邻接)，权 $|u-v|$。
+   * 总边数 ≤ $m_1m_2$ (题设 ≤10⁶)，可跑 Dijkstra。
+3. **最短路 (lazy)**
+   懒扩展：出堆时才穷举 $deg(x)\cdot deg(y)$ 个邻对并松弛；丢弃过期条目。
+   复杂度 $O((n^2+m_1m_2)\log n^2)$，数据上限内可通过。
+
+---
+
+**关键步骤**
+
+1. **预处理公共边**
+
+   ```cpp
+   set<pair<int,int>> E1;
+   // 读 G1 边 -> E1
+   // 读 G2 边，如 (v,u)∈E1 ⇒ good[v]=good[u]=true
+   ```
+2. **Dijkstra over Cartesian product**
+
+   ```cpp
+   dist[s1][s2]=0; pq.push({0,{s1,s2}});
+   while(!pq.empty()){
+        auto [d,{x,y}]=pq.top(); pq.pop();
+        if(d!=dist[x][y]) continue;        // 过期
+        for(int u: G1[x])
+            for(int v: G2[y]){
+                long long nd=d+abs(u-v);
+                if(nd<dist[u][v]){
+                    dist[u][v]=nd;
+                    pq.push({nd,{u,v}});
+                }
+            }
+   }
+   ```
+3. **答案**
+   $\min_{v\text{ good}} \text{dist}[v][v]$。若全为 INF ⇒ −1。
+
+---
+
+整体复杂度：
+
+* 时间 $O((n^2+m_1m_2)\log n^2)$。
+* 空间 $O(n^2)$。
 
