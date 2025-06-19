@@ -2030,3 +2030,74 @@ link: [https://codeforces.com/contest/2059/problem/D](https://codeforces.com/con
 * 时间 $O((n^2+m_1m_2)\log n^2)$。
 * 空间 $O(n^2)$。
 
+# G. 二进制字符串众数分解
+
+link: https://codeforces.com/contest/2121/problem/G
+
+**标签**: 二进制、前缀和、排序、数学
+
+**题目简述**: 给定长度为 n 的二进制字符串 s，求所有子串 s\[l..r] 中 f(s\[l..r]) 的总和，其中 f(p) 为 p 中 0 和 1 出现次数的最大值。
+
+**本质思路**
+利用 $f=\frac{L+|z-o|}2$，把总和拆成两部分：子串长度之和和绝对差之和。前者用公式 $\sum_{i=0}^{n-1}(i+1)(n-i)$ 线性求；后者排序前缀差并累加邻差乘出现次数高效算出。
+
+**关键步骤**
+
+1. 计算前缀差 `pre[i]=#0(1…i)-#1(1…i)`，长度 n+1
+2. 对 `pre` 排序得 b\[0…n]，累加 $\sum_{k=1}^n(b_k-b_{k-1})\times k\times(n+1-k)$
+3. 计算所有子串长度之和：$\sum_{i=0}^{n-1}(i+1)(n-i)$
+4. 答案 = (差分绝对值和 + 长度和) / 2
+
+**复杂度**: 时间 O(n log n)，空间 O(n)
+```cpp
+    int n;
+    string s;
+    cin >> n >> s;
+    vector<int> pre(n + 1);
+    for (int i = 0; i < n; ++i) {
+        // 前缀差：0 记 -1，1 记 +1
+        pre[i + 1] = pre[i] + (s[i] == '0' ? -1 : 1);
+    }
+    std::ranges::sort(pre);
+    ll ans = 0;
+    // 累加前缀差绝对值和部分
+    for (ll i = 1; i <= n; ++i) {
+        ans += (pre[i] - pre[i - 1]) * i * (n - i + 1);
+    }
+    // 累加所有子串长度和部分
+    for (ll i = 0; i < n; ++i) {
+        ans += (i + 1) * (n - i);
+    }
+    // 合并除以 2
+    ans >>= 1;
+    cout << ans << "\n";
+```
+# F. Yamakasi
+
+link: [https://codeforces.com/contest/???/problem/F](https://codeforces.com/contest/???/problem/F)
+
+**标签**: 前缀和、哈希、区间断开、容斥
+
+**题目简述**
+给定数组 $a_1\dots a_n$ 及整数 $s,x$。统计满足两条件的子段数：① 元素和为 $s$；② 子段最大值为 $x$。
+
+**本质思路**
+利用容斥拆为两计数函数：
+
+$$
+\text{ans}=\underbrace{\#\bigl[\text{sum}=s,\;\max\le x\bigr]}_{f(x)}-\underbrace{\#\bigl[\text{sum}=s,\;\max\le x-1\bigr]}_{f(x-1)}.
+$$
+
+每个 $f(p)$ 通过「遇到 $a_i>p$ 清空统计器」的技巧在线计算。
+
+**关键步骤**
+
+1. **前缀和**  $pre[i]=\sum_{1..i}a_i$。
+2. **分段统计**  遍历 $i$，若 $a_i>p$ 清空 `cnt`（断开）。否则：
+
+   * 若 `cnt` 中存在键 $pre[i]-s$，将其频次加至答案。
+   * 将当前前缀 $pre[i]$ 写回 `cnt`。
+3. **两遍调用**  分别算 $f(x)$、$f(x-1)$，相减即得结果。
+
+**复杂度**
+时间 $O(n\log n)$（`map`）或 $O(n)$（`unordered_map`）；空间 $O(n)$。
