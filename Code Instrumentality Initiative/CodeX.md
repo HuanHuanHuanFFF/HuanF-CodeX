@@ -2083,7 +2083,6 @@ link: [https://codeforces.com/contest/???/problem/F](https://codeforces.com/cont
 
 **本质思路**
 利用容斥拆为两计数函数：
-
 $$
 \text{ans}=\underbrace{\#\bigl[\text{sum}=s,\;\max\le x\bigr]}_{f(x)}-\underbrace{\#\bigl[\text{sum}=s,\;\max\le x-1\bigr]}_{f(x-1)}.
 $$
@@ -2101,3 +2100,87 @@ $$
 
 **复杂度**
 时间 $O(n\log n)$（`map`）或 $O(n)$（`unordered_map`）；空间 $O(n)$。
+
+
+# L. 三点最小点积
+
+link: https://codeforces.com/gym/105941
+
+**标签**: 凸包、旋转卡壳 (双指针)、点积优化
+
+**题目简述**  
+给定 $n$ 个点，从中选三点 $A,B,C$ 使  
+$$(B-A)\cdot(C-A)$$  
+最小。输出最小值。
+
+---
+
+## 本质思路  
+1. 对固定 $A$，函数 $f_{A}(B,C)=(B-A)\cdot(C-A)$ **关于 $B,C$ 是线性**；  
+   线性目标在凸集上极值必取于凸包极点 ⇒ 最优 $B,C$ 必在输入点的凸包顶点上。  
+2. 枚举 $A\in$ 所有输入点，枚举 $B\in$ 凸包顶点。  
+3. 对每对 $(A,B)$，$f_A$ 关于 $C$ 沿凸包呈单峰（投影一维单调）→ 用双指针维护最优 $C$。  
+   `cp` 只前移不回退，整体 $O(h)$。  
+
+---
+
+## 关键步骤
+
+1. **凸包**  
+   Andrew 单调链，得到逆时针顶点序 `hull`，$h\le n$。  
+2. **枚举**  
+   
+   ```pseudo
+   ans = 0
+   for A in points:
+       cp = 1
+       for bp = 0..h-1:          // B = hull[bp]
+           if B==A: continue
+           AB = B - A
+           if bp==0: cp = 1
+           if cp==bp: cp = (cp+1)%h
+           // 旋转卡壳：单调前移 cp
+           while dot(AB, hull[nxt]-A) < dot(AB, hull[cp]-A):
+               cp = nxt
+           ans = min(ans, dot(AB, hull[cp]-A))
+   ```
+   
+3. **输出** `ans`。
+
+---
+
+## 整体复杂度
+
+* 凸包 `O(n log n)`
+* 主循环 `O(n h)`，最坏 `O(n²)` (≤ ≈4e7)
+* 空间 `O(n)`
+
+# D. XOR 最短路径
+
+link: https://atcoder.jp/contests/abc410/tasks/abc410_d
+
+**标签**: BFS、图论、状态拓展、按位异或
+
+**题目简述**:  
+给定一个有向带权图，包含 \(N\) 个顶点和 \(M\) 条边，每条边从 \(A_i\) 到 \(B_i\) 权值为 \(W_i\)。求从顶点 1 到顶点 \(N\) 的一条路径，使得路径上所有边权的按位 XOR 值最小；若不存在路径则输出 \(-1\)。
+
+**本质思路**  
+通过「状态拓展」将原图中每个顶点 \(x\) 拓展为多种状态 \((x,s)\)，其中 \(s\) 表示从 1 到 \(x\) 的路径 XOR 值。在这个隐式状态图上做 BFS，层序遍历保证第一次访问到 \((N,s)\) 的 \(s\) 即为最小 XOR。
+
+**关键步骤**
+
+1. **状态定义**  
+   - 用二维数组 `vis[x][s]` 表示状态 \((x,s)\) 是否已访问。  
+2. **初始化**  
+   - `vis[1][0] = true`，将状态 \((1,0)\) 入队。  
+3. **BFS 过程**  
+   - 当队列非空时，取出 \((x,s)\)，遍历原图中所有出边 \((x→y, w)\)：  
+     - 计算新状态 `s2 = s ⊕ w`  
+     - 若 `vis[y][s2] == false`，则标记 `vis[y][s2] = true` 并入队 \((y, s2)\)。  
+4. **答案提取**  
+   - BFS 结束后，从 \(s=0\) 到 \(1023\) 依次检查 `vis[N][s]`：  
+     - 首个为 `true` 的 \(s\) 即为答案；若无，则输出 `-1`。
+
+整体复杂度：  
+- 时间复杂度：\(O((N+M)\times2^{10})\)  
+- 空间复杂度：\(O(N\times2^{10})\)  
