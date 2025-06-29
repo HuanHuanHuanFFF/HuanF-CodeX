@@ -31,6 +31,10 @@ constexpr bool more = true;
 
 // Codeforces Round 784 (Div. 4) 
 // H. Maximal AND
+// https://codeforces.com/problemset/problem/1669/H
+// 贪心 位运算
+// 需要每位都是1,这位才能计入答案
+// 先统计每个位的1个数,然后再从最高位看能不能补满,计算答案
 void HuanF() {
     int n, k;
     cin >> n >> k;
