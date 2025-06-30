@@ -2307,3 +2307,30 @@ link: [https://codeforces.com/contest/2051/problem/F](https://codeforces.com/con
 **复杂度**
 时间 $O(q)$，空间 $O(1)$。
 
+## G. 树的破坏
+**link**: https://codeforces.com/problemset/problem/2050/G  
+**标签**: 树 DP、贪心  
+
+**题目简述**  
+删除树上一条路径后，根据被切断的边数求最大连通分量数。
+
+**本质思路**  
+1. **权值建模**：设每个顶点权重 \(w(v)=\deg(v)-2\)，路径权和再加 3 即为分量数。  
+2. **双态 DP**：  
+   - \(dp_x(v)\)：以 \(v\) 为顶点、向下一支路径的最大权和；  
+   - \(dp_y(v)\)：经 \(v\) 从一子树到另一子树的最大权和。  
+3. **后序遍历合并子结果**：维护两大子贡献 \(m_1,m_2\)，依次更新 \(dp_x,dp_y\)。  
+4. **答案取全局最大**：\(\max_v\{\max(dp_x(v),dp_y(v))\}+3\)。
+
+**关键伪代码**  
+```
+dfs(v):
+  dp_x(v)=deg(v)
+  collect dp_x(u)  // 所有子 u 的结果
+  m1,m2=两大值
+  dp_x(v)=max(dp_x(v), m1+deg(v)-2)
+  if m2 存在: dp_y(v)=m1+m2+deg(v)-4 else dp_y(v)=dp_x(v)
+```
+
+**复杂度**  
+- 时间 \(O(n)\)，空间 \(O(n)\)。
