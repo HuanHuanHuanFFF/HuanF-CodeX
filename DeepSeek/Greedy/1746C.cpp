@@ -36,6 +36,7 @@ constexpr bool more = true;
 // 由于给的是一个排列,所以一定能变成0逆序对
 // 维护一个set集合,放的是第x次操作加上x
 // 从后往前遍历,每次遇到前面一个比当前大的就从set中二分找>=差的,然后移除
+// O(NlogN)
 void HuanF() {
     int n;
     cin >> n;
