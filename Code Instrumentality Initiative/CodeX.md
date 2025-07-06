@@ -2048,6 +2048,7 @@ link: https://codeforces.com/contest/2121/problem/G
 4. 答案 = (差分绝对值和 + 长度和) / 2
 
 **复杂度**: 时间 O(n log n)，空间 O(n)
+
 ```cpp
     int n;
     string s;
@@ -2071,6 +2072,7 @@ link: https://codeforces.com/contest/2121/problem/G
     ans >>= 1;
     cout << ans << "\n";
 ```
+
 # F. Yamakasi
 
 link: [https://codeforces.com/contest/???/problem/F](https://codeforces.com/contest/???/problem/F)
@@ -2360,3 +2362,66 @@ link: https://codeforces.com/contest/1765/problem/K
 
 **整体复杂度**：\(O(n^2)\)  
 **空间复杂度**：\(O(n^2)\)  
+
+# D. Unique Median
+
+link: [https://codeforces.com/problemset/problem/2056/D](https://codeforces.com/problemset/problem/2056/D)
+
+**标签**: 枚举、前缀和、哈希、双指针
+
+**题目简述**
+统计数组 $a$ 所有子数组中“中位数唯一”的个数。已知 $1\le a_i\le10$。
+
+**本质思路**
+偶长子数组若“大于 x”与“≤ x”元素数目相等且区间内出现 $x$，则两个中位数同为 $x$，中位数不唯一。
+→ 枚举 $x=1\ldots10$，把
+
+$$
+b_i=\begin{cases}
++1,&a_i>x\\
+-1,&a_i\le x
+\end{cases}
+$$
+
+对子数组和为 0 且包含 $x$ 的区间计数为 **bad**；答案 = 全部子数组数 − bad。
+
+**关键步骤**
+
+1. **全部子数组数** $all = n(n+1)/2$。
+2. **枚举$x$**
+
+   1. 计算前缀和 `pre[k]=Σ_{0..k-1} b`。
+   2. 用 `map<int,int> cnt` 记录已激活前缀和出现次数；指针 `j` 表示激活到的位置。
+   3. 扫描右端 `i`：
+
+      * 若 `a[i]==x`，将 `pre[j..i]` 加入 `cnt`（保证区间含 $x$）。
+      * 累加 `bad += cnt[pre[i+1]]`（和为 0 的区间数）。
+3. **输出** `all - bad`。
+
+**整体复杂度** 时间 $O(10n)$，空间 $O(n)$。
+
+---
+
+```cpp
+    using ll = long long;
+    int n;  cin >> n;
+    vector<int> a(n); for (int &v: a) cin >> v;
+    ll all = 1LL * n * (n + 1) / 2, bad = 0;
+
+    for (int x = 1; x <= 10; ++x) {
+        vector<int> pre(n + 1);
+        for (int i = 0; i < n; ++i)          // 前缀和
+            pre[i + 1] = pre[i] + (a[i] > x ? 1 : -1);
+
+        map<int,int> cnt;
+        int j = 0;
+        for (int i = 0; i < n; ++i) {
+            if (a[i] == x)                   // 激活左端
+                while (j <= i) ++cnt[pre[j++]];
+            bad += cnt[pre[i + 1]];          // 统计坏区间
+        }
+    }
+    cout << all - bad << '\n';
+```
+
+**复杂度** $O(10n)$ | $O(n)$
