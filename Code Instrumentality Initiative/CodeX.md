@@ -2480,3 +2480,59 @@ $$
 
 * 时间：$O(n\log n)$
 * 空间：$O(n)$
+
+# F. 1-1-1, Free Tree!
+
+**link**: [https://codeforces.com/contest/2126/problem/F](https://codeforces.com/contest/2126/problem/F)
+
+**标签**: 树·DFS·哈希映射·在线维护·复杂度优化
+
+---
+
+## 题目简述
+
+给定一棵有 $n$ 个节点的树，每条边带权 $c_i$，每个节点有颜色 $a_i$。一条边若两端颜色相同则代价为 0，否则为该边权。共有 $q$ 次操作，每次将顶点 $v$ 重染为颜色 $x$，操作后输出所有边的总代价。
+
+---
+
+## 本质思路
+
+1. **预累积**：
+
+   * 根化 DFS 从节点 1 出发，对每条「父→子」边 $(u,v)$ 执行 `cost[u][color[v]] += c`，同时若 `color[u] != color[v]` 则将该边权累加到初始 `sum`。
+   * 记录 `parent[v]` 和 `pcost[v]`（节点 $v$ 与其父节点的边权）。
+2. **在线重染**：对顶点 $v$ 改色为 $x$，令 `old = color[v]`：
+   a. 子边影响：
+
+   ```cpp
+   sum += cost[v][old];   // 原本同色→异色的增量
+   sum -= cost[v][x];     // 原本异色→同色的减量
+   ```
+
+   b. 父边影响（若 `parent[v] != 0`）：
+
+   ```cpp
+   if(color[parent[v]] == old) sum += pcost[v];
+   if(color[parent[v]] == x)   sum -= pcost[v];
+   // 更新父节点映射
+   cost[parent[v]][old] -= pcost[v];
+   cost[parent[v]][x]   += pcost[v];
+   ```
+
+   c. 更新 `color[v] = x` 并输出当前 `sum`。
+3. **局部更新**：每次仅访问常数个映射条目和父边，无需遍历所有邻居，保证高效。
+
+---
+
+## 关键步骤
+
+1. **DFS 初始化**：根化并构造 `cost`，计算初始 `sum`；
+2. **每次重染**：按预累积数据及父边常数更新 `sum` 和映射；
+3. **输出结果**：即时输出当前总代价。
+
+---
+
+## 复杂度
+
+* 时间：$O(n + q\log n)$
+* 空间：$O(n + m)$
