@@ -1195,7 +1195,7 @@ K 的所有贡献。
 
 # D. D/D/D
 
-**link**：[https://codeforces.com/contest/1025/problem/D](https://codeforces.com/contest/1025/problem/D)
+**link**：https://codeforces.com/contest/2109/problem/D
 **标签**：图论、BFS、双状态、子集和、奇偶性
 
 **本质思路**
@@ -2536,3 +2536,38 @@ $$
 
 * 时间：$O(n + q\log n)$
 * 空间：$O(n + m)$
+
+# C. Count Good Numbers
+
+link: [https://codeforces.com/problemset/problem/2125/C](https://codeforces.com/problemset/problem/2125/C)
+
+**标签**: 数论、容斥原理
+
+**题目简述**: 统计区间 $[l,r]$ 内所有与 2、3、5、7 互质的“好数”个数
+
+---
+
+**本质思路**
+将“与 2、3、5、7 互质”转换为“不被任意子集乘积整除”，用容斥原理枚举子集，对每个子集计算
+
+$$
+ f(N)=\sum_{S\subseteq\{2,3,5,7\}}(-1)^{|S|}\left\lfloor\frac{N}{\prod_{p\in S}p}\right\rfloor
+$$
+
+答案即 $f(r)-f(l-1)$
+
+---
+
+**关键步骤**
+
+1. 枚举子集 mask 从 0 到 15，对应 $S\subseteq\{2,3,5,7\}$
+2. 计算 `prod = ∏S`，`bit = |S|`
+3. 累加 `ans += (bit&1 ? -N/prod : +N/prod)`
+4. 对每个测试用例输出 `f(r) - f(l-1)`
+
+---
+
+**复杂度**
+
+* 时间复杂度: $O(t\cdot2^4)=O(t)$
+* 空间复杂度: $O(1)$
