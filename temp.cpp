@@ -9,6 +9,7 @@ using std::string;
 
 using ll = long long;
 using ull = unsigned long long;
+using ld = long double;
 using PII = pair<int, int>;
 constexpr int MOD = 1e9 + 7;
 constexpr int INF = 1e9 + 17;
