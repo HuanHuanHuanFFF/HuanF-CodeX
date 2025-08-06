@@ -11,9 +11,9 @@ using ll = long long;
 using ull = unsigned long long;
 using ld = long double;
 using PII = pair<int, int>;
-constexpr int MOD = 1e9 + 7;
-constexpr int INF = 1e9 + 17;
-constexpr int N = 1e7 + 7;
+constexpr ll MOD = 1e9 + 7;
+constexpr ll INF = 1e9 + 17;
+constexpr ll N = 1e7 + 7;
 
 std::mt19937 rnd(std::chrono::steady_clock::now().time_since_epoch().count());
 
