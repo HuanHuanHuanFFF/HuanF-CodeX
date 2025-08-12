@@ -1,12 +1,12 @@
-# 日历计算常用算法
+# 日历计算常用算法公式
 
-下面以函数形式给出常见的日历计算公式，仅说明返回值含义。
+## 计算星期几
 
 ---
 
-## 1. Zeller’s 公式
+### 1. Zeller’s 公式
 
-```cpp
+```c++
 // 返回值：0=Saturday, 1=Sunday, …, 6=Friday
 int zeller(int year, int month, int day) {
     if (month < 3) {
@@ -22,9 +22,9 @@ int zeller(int year, int month, int day) {
 
 ---
 
-## 2. Gauss 公式
+### 2. Gauss 公式
 
-```cpp
+```c++
 // 返回值：0=Sunday, 1=Monday, …, 6=Saturday
 int gauss(int year, int month, int day) {
     if (month < 3) {
@@ -41,9 +41,9 @@ int gauss(int year, int month, int day) {
 
 ---
 
-## 3. Doomsday 算法
+### 3. Doomsday 算法
 
-```cpp
+```c++
 // 返回值：0=Sunday, 1=Monday, …, 6=Saturday
 int doomsday(int year, int month, int day) {
     static int cc[] = {2, 0, 5, 3};      // 世纪码(按 century%4)
@@ -64,9 +64,9 @@ int doomsday(int year, int month, int day) {
 
 ---
 
-## 4. Sakamoto 算法
+### 4. Sakamoto 算法
 
-```cpp
+```c++
 // 返回值：0=Sunday, 1=Monday, …, 6=Saturday
 int sakamoto(int year, int month, int day) {
     static int t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
@@ -74,3 +74,39 @@ int sakamoto(int year, int month, int day) {
     return (year + year/4 - year/100 + year/400 + t[month-1] + day) % 7;
 }
 ```
+
+---
+
+## 日序映射
+
+把 0001-01-01 映射为 0 (改变映射起始位置直接改最后一位常数项即可,可参考下面):
+
+$$
+\text{idx}
+= 365Y+\Big\lfloor\frac{Y}{4}\Big\rfloor-\Big\lfloor\frac{Y}{100}\Big\rfloor+\Big\lfloor\frac{Y}{400}\Big\rfloor
++\Big\lfloor\frac{153\,(M-3)+2}{5}\Big\rfloor + D\;-\;307
+$$
+
+对于前一天后一天可直接+1/-1
+
+```c++ 
+// 0001-01-01 -> 0
+long long base_0001(int Y, int M, int D) { 
+    if (M <= 2) { Y--; M += 12; }
+    return 365LL*Y + Y/4 - Y/100 + Y/400
+         + (153LL*(M-3)+2)/5 + D - 307;
+}
+
+//计算日序差
+long long day_dis(int y, int m, int d, int Y, int M, int D) {
+    return base_0001(y, m, d) - base_0001(Y, M, D);
+}
+
+// 1970-01-01 -> 0
+long long day_index(int Y, int M, int D) {
+    if (M <= 2) { Y--; M += 12; }
+    return 365LL*Y + Y/4 - Y/100 + Y/400
+         + (153LL*(M-3)+2)/5 + D - 719468; 
+}
+```
+
