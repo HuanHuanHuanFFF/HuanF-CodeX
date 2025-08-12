@@ -2571,3 +2571,133 @@ $$
 
 * 时间复杂度: $O(t\cdot2^4)=O(t)$
 * 空间复杂度: $O(1)$
+
+
+
+# F. 前缀差绝对值和（双指针 / 二分）
+
+link: https://codeforces.com/contest/2131/problem/F
+
+**标签**: 绝对值拆分、排序+前缀和、双指针、二分、等价变形
+
+---
+
+## 本质
+
+1. **考点**：把 `min(cnt0,cnt1)` 变为常数项 − 绝对值项；再把二维求和化为一维模板 $\sum_j |x-B_j|$。
+2. **为何可行**：$\min(u,v)=(u+v-|u-v|)/2$，且 $\text{cnt0}+\text{cnt1}=i+j$ 是常数；于是只需计 $\sum |A_i-B_j|$。
+3. **复盘**：对 $B$ 升序+前缀和，用二分/滑动指针在 $O(\log n)$ 或 $O(1)$ 摊还内求每个 $A_i$ 的贡献。
+
+---
+
+## 推导（逐步）
+
+**定义**
+$\displaystyle \text{prea}[i]=\#0(a[1..i])-\#1(a[1..i])$
+$\displaystyle \text{preb}[j]=\#1(b[1..j]) - \#0(b[1..j])$
+（符号相反，便于后续出现 $|\text{prea}-\text{preb}|$）
+
+令
+$\displaystyle \text{cnt0}(i,j)=\#0(a[1..i])+\#0(b[1..j])$,
+$\displaystyle \text{cnt1}(i,j)=\#1(a[1..i])+\#1(b[1..j])$.
+题目中的单对贡献：$f(i,j)=\min(\text{cnt0},\text{cnt1})$。
+
+**恒等式**
+$\min(u,v)=(u+v-|u-v|)/2$。  又有 $\text{cnt0}+\text{cnt1}=i+j$。
+并且
+
+$$
+\text{cnt0}-\text{cnt1}=\big(\#0-\#1\big)_a+\big(\#0-\#1\big)_b
+=\text{prea}[i]-\big(\#1-\#0\big)_b
+=\text{prea}[i]-\text{preb}[j].
+$$
+
+因此
+
+$$
+\begin{aligned}
+\sum_{i=1}^n\sum_{j=1}^n f(i,j)
+&=\sum_{i,j}\frac{i+j}{2}-\frac12\sum_{i,j}\big|\text{prea}[i]-\text{preb}[j]\big| \\
+&=\underbrace{\frac{n^2(n+1)}{2}}_{\text{常数项}}\;\; -\;\; \frac12\sum_{i=1}^n\sum_{j=1}^n |A_i-B_j|,
+\end{aligned}
+$$
+
+其中记 $A_i=\text{prea}[i],\ B_j=\text{preb}[j]$。
+
+> 于是问题等价于：计算 $\sum_{i,j}|A_i-B_j|$，再从常数项中减去其一半。
+
+---
+
+## 计算 $\sum_{i,j}|A_i-B_j|$ 的模板
+
+**排序与前缀和**
+将 $B$ 升序，做前缀和 $\text{sumB}[t]=\sum_{j\le t}B_j$。
+
+**单点查询**  对任意实数 $x$，设 $p=\#\{j\mid B_j\le x\}$，则
+
+$$
+\sum_j |x-B_j|
+= x\cdot p-\text{sumB}[p] + (\text{sumB}[n]-\text{sumB}[p]) - x\cdot(n-p).
+$$
+
+**整题求和**
+
+* 若直接遍历 $A_i$（无单调性）：每个 $A_i$ 用二分找 $p$，总 $O(n\log n)$。
+* 若 $A_i$ 单调（或相邻变化小，如本题相邻仅 $\pm1$）：在排序后的 $B$ 上用**滑动指针**维护 $p$，总 $O(n)$（除去排序）。
+
+**答案**
+$\text{base}=\dfrac{n^2(n+1)}2$, $\text{absSum}=\sum_{i,j}|A_i-B_j|$。
+最终 $\displaystyle \text{Ans}=\text{base}-\dfrac{\text{absSum}}{2}.$
+
+---
+
+## 代码（最小核心，滑动指针版）
+
+```cpp
+// A: prea[1..n] 升序；B: preb[1..n] 升序
+long long abs_sum(vector<long long>& A, vector<long long>& B){
+    int n = (int)A.size()-1; // 1-indexed
+    vector<long long> pre(n+1,0);
+    for(int i=1;i<=n;i++) pre[i]=pre[i-1]+B[i];
+    long long S=0; int p=0; // p = #B<=A[i]
+    for(int i=1;i<=n;i++){
+        while(p<n && B[p+1]<=A[i]) ++p;
+        S += A[i]*p - pre[p] + (pre[n]-pre[p]) - A[i]*(n-p);
+    }
+    return S;
+}
+```
+
+---
+
+## 可推广模板（举一反三）
+
+1. **全对绝对值和**：$\displaystyle \sum_{i<j}|X_i-X_j|$
+   排序 $X$ 后有闭式：$\sum_{i=1}^n X_i\,(2i-n-1)$。
+
+2. **加权情形**：$\sum_j w_j|x-B_j|$
+   排序 $B$，预处理 $\text{sumW}[t]=\sum_{j\le t} w_j$, $\text{sumWB}[t]=\sum_{j\le t} w_jB_j$。
+   设 $p=\#\{B_j\le x\}$，则
+
+   $$
+   \sum_j w_j|x-B_j|= x\cdot \text{sumW}[p]-\text{sumWB}[p]
+   + (\text{sumWB}[n]-\text{sumWB}[p]) - x\cdot(\text{sumW}[n]-\text{sumW}[p]).
+   $$
+
+3. **二维曼哈顿**：$\sum_j |x-X_j|+|y-Y_j|$
+   分别对 $x$ 与 $y$ 套 1D 模板后相加（可分离）。
+
+4. **动态集合（可修改）**
+   需要数据结构维持有序多集与若干前缀和：Fenwick / 线段树维护计数、和、加权和，可在 $O(\log n)$ 完成插入、删除与查询 $\sum|x-B_j|$。
+
+5. **在线多点**：若查询点 $x$ 许多且离线可行，先按 $x$ 升序，与 $B$ 的指针双向扫描，摊还 $O(1)$ 移动。
+
+---
+
+## 复杂度
+
+* 预处理与排序：$O(n\log n)$
+* 计算 $\sum|A-B|$：二分版 $O(n\log n)$，滑动指针版 $O(n)$
+* 空间：$O(n)$
+
+> 记忆要点：**min→常数−绝对值**，**绝对值→排序+前缀和**，若查询单调则用**滑动指针**降到线性。
