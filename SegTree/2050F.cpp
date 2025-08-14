@@ -25,13 +25,14 @@ void init() {
 namespace seg {
     using std::vector;
 
-    template<typename T, auto merge, auto e>
+    template<typename T, auto merge, auto E>
     struct SegmentTree {
         int n;
         vector<T> t;
+        static const T e = E();
 
         // 自定义功能1-idx线段树
-        SegmentTree(int n): n(n) { t.assign(4 * (n + 1) + 5, e()); }
+        SegmentTree(int n): n(n) { t.assign(4 * n + 5, e); }
 
         // 构建：输入数组 a[1..n]
         void build(const vector<T> &a) { build(1, 1, n, a); }
@@ -66,7 +67,7 @@ namespace seg {
         }
 
         T query(int p, int l, int r, int L, int R) {
-            if (r < L || R < l) return e();
+            if (r < L || R < l) return e;
             if (L <= l && r <= R) return t[p];
             int m = (l + r) >> 1;
             T left = query(p << 1, l, m, L, R);
@@ -75,7 +76,6 @@ namespace seg {
         }
     };
 }
-
 
 constexpr bool more = true;
 
