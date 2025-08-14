@@ -1,27 +1,38 @@
 //
-// Created by 幻 on 2025/6/10.
+// Created by 幻 on 2025/8/14.
 //
 #include <bits/stdc++.h>
 
 namespace seg {
     using std::vector;
+    using std::function;
 
-    template<typename T, auto merge, auto e>
+    template<typename T>
     struct SegmentTree {
         int n;
         vector<T> t;
+        function<T(T &, T &)> merge;
+        T init_v;
 
-        // 自定义功能1-idx线段树
-        SegmentTree(int n): n(n) { t.assign(4 * (n + 1) + 5, e()); }
+        SegmentTree(int n, function<T(T &, T &)> merge, T init_v)
+            : n(n), merge(merge), init_v(init_v) {
+            t.assign(4 * (n + 1), init_v);
+        }
 
         // 构建：输入数组 a[1..n]
-        void build(const vector<T> &a) { build(1, 1, n, a); }
+        void build(const vector<T> &a) {
+            build(1, 1, n, a);
+        }
 
         // 单点更新：将位置 pos 的值设为 v
-        void update(int pos, const T &v) { update(1, 1, n, pos, v); }
+        void update(int pos, const T &v) {
+            update(1, 1, n, pos, v);
+        }
 
         // 区间查询：[L, R]
-        T query(int l, int r) { return query(1, 1, n, l, r); }
+        T query(int L, int R) {
+            return query(1, 1, n, L, R);
+        }
 
     private:
         void build(int p, int l, int r, const vector<T> &a) {
@@ -47,7 +58,7 @@ namespace seg {
         }
 
         T query(int p, int l, int r, int L, int R) {
-            if (r < L || R < l) return e();
+            if (r < L || R < l) return init_v;
             if (L <= l && r <= R) return t[p];
             int m = (l + r) >> 1;
             T left = query(p << 1, l, m, L, R);
