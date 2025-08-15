@@ -13,7 +13,8 @@ namespace seg {
         static const T e = E();
 
         // 自定义功能1-idx线段树
-        SegmentTree(int n): n(n) { t.assign(4 * n + 5, e); }
+        SegmentTree(int n): n(n), t(4 * n + 5, e) {
+        };
 
         // 构建：输入数组 a[1..n]
         void build(const vector<T> &a) { build(1, 1, n, a); }
