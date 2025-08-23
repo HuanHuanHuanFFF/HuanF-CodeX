@@ -56,7 +56,6 @@ constexpr bool more = false;
  *  引理2 机场虚点使用次数: 经 0 超过一次可把 0→…→0 用 0 直接替换, 因此最短路至多一次经过 0
  * 复杂度: 预处理 O(n^3); 每次查询 O(n^2); 空间 O(n^2)
  */
-
 void HuanF() {
     int n, m;
     cin >> n >> m;
