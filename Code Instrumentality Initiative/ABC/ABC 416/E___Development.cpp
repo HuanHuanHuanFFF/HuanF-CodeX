@@ -40,7 +40,23 @@ void init() {
 constexpr bool more = false;
 
 // AtCoder Beginner Contest 416
-// E - Development
+/* ABC416-E Development
+ * link: https://atcoder.jp/contests/abc416/tasks/abc416_e
+ * 标签: 最短路, Floyd, 动态加边, 增量APSP, 虚拟点
+ * 思路:
+ * 建模: 建 n 个城市与虚拟点 0 表示天空; 若城 i 有机场则加有向边 i→0 权 T 与 0→i 权 0; 公路为无向边
+ * 预处理: 对 0..n 跑 Floyd 取所有点对最短路
+ * 询问1 加公路 x−y, 权 w: 新最短路只可能形如 i→…→x→(x,y)→…→j 或 i→…→y→(y,x)→…→j
+ *       故 O(n^2) 更新 dis[a][b]=min(dis[a][b], dis[a][x]+w+dis[y][b], dis[a][y]+w+dis[x][b])
+ * 询问2 城市 x 建机场: 加边 x→0 权 T 与 0→x 权 0
+ *       先用 dis[j][x]=min(dis[j][x], dis[j][0]+T), dis[0][j]=min(dis[0][j], dis[x][j]) 更新与 0 的距离
+ *       再 O(n^2) 扫描, 用经过虚点一次的路径松弛 dis[a][b]=min(dis[a][b], dis[a][0]+dis[0][b])
+ * 证明要点:
+ *  引理1 单条新边影响: 任一新更优路径若使用新边, 取其第一次使用处即得到分解 i→x + w + y→j
+ *  引理2 机场虚点使用次数: 经 0 超过一次可把 0→…→0 用 0 直接替换, 因此最短路至多一次经过 0
+ * 复杂度: 预处理 O(n^3); 每次查询 O(n^2); 空间 O(n^2)
+ */
+
 void HuanF() {
     int n, m;
     cin >> n >> m;
