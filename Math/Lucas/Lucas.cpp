@@ -7,6 +7,23 @@ using namespace std;
 
 using ll = long long;
 
+/* Lucas 定理
+ * link: https://oi-wiki.org/math/number-theory/combination/  (参考)
+ * 标签: 数论, 组合数, 模运算
+ * 思路:
+ * 1. 预处理 0…p-1 范围内阶乘 fac 与逆元阶乘 ifac, 用于快速计算 C(n,k) mod p
+ * 2. 对于 n,k < p 时, 可直接用 fac 与 ifac 计算 C(n,k)
+ * 3. 对于大规模 n,k, 按 Lucas 定理:
+ *      C(n,k) ≡ C(n%p, k%p) * C(n/p, k/p) (mod p)
+ *    递归分解直到 n,k 为 0
+ * 4. 逐位相乘得到最终结果
+ *
+ * 时间复杂度:
+ *  - 预处理: O(p)
+ *  - 单次查询 get(n,k): O(log_p(n))
+ *
+ * 空间复杂度: O(p)
+ */
 struct Lucas {
     int p;
     vector<int> fac, ifac;
