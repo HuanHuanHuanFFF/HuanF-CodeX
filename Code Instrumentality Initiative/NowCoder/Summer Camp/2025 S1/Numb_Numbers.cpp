@@ -1,5 +1,5 @@
 //
-// Created by 幻 on 2025/5/25.
+// Created by 幻 on 2025/7/15.
 //
 #include <bits/stdc++.h>
 
@@ -27,14 +27,17 @@ void init() {
     IOS();
 }
 
+constexpr bool more = false;
+
+//  
+// Numb Numbers
 void HuanF() {
 }
 
 signed main() {
     init();
     int T = 1;
-    // cin >> T;
-    while (T-- > 0)
-        HuanF();
+    if (more) cin >> T;
+    while (T-- > 0) HuanF();
     return 0;
 }
