@@ -42,6 +42,8 @@ constexpr bool more = true;
 
 // Codeforces Round 1065 (Div. 3) 
 // D. Rae Taylor and Trees (easy version)
+// https://codeforces.com/contest/2171/problem/D
+// 如果前面部分的最小值大于后面部分的最大值,那么一定不可能连成一棵树
 void HuanF() {
     int n;
     cin >> n;
