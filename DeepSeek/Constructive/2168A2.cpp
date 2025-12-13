@@ -48,6 +48,7 @@ constexpr bool more = false;
 
 // Testing Round 20 (Unrated, Communication Problems) 
 // A2. Encode and Decode (Hard Version)
+// https://codeforces.com/contest/2168/problem/A2
 // 编码解码,找到足够高效的编码方式即可
 // 这里直接对应0~9数字,加上一个间隔
 // 长度为10的数字直接强制隔开即可

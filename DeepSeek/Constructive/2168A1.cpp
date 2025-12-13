@@ -42,6 +42,7 @@ constexpr bool more = false;
 
 // Testing Round 20 (Unrated, Communication Problems) 
 // A1. Encode and Decode (Easy Version)
+// https://codeforces.com/contest/2168/problem/A1
 void HuanF() {
     string s;
     cin >> s;
