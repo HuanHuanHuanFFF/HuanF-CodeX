@@ -49,12 +49,3 @@ func numMagicSquaresInside(grid [][]int) int {
 	}
 	return ans
 }
-
-func main() {
-	var grid = [][]int{
-		{10, 3, 5},
-		{1, 6, 11},
-		{7, 9, 2},
-	}
-	print(numMagicSquaresInside(grid))
-}
