@@ -1,4 +1,4 @@
-package daily
+package main
 
 func pyramidTransition(bottom string, allowed []string) bool {
 	top := [6][6][]int{}

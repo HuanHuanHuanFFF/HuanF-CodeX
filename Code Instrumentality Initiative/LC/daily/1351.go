@@ -1,4 +1,4 @@
-package daily
+package main
 
 func countNegatives(grid [][]int) int {
 	ans, n, m := 0, len(grid), len(grid[0])

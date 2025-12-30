@@ -1,4 +1,4 @@
-package daily
+package main
 
 func bestClosingTime(customers string) int {
 	n := len(customers)
