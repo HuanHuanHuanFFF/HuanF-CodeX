@@ -1,4 +1,4 @@
-package DP
+package main
 
 func uniquePathsWithObstacles(obstacleGrid [][]int) int {
 	n, m := len(obstacleGrid), len(obstacleGrid[0])
