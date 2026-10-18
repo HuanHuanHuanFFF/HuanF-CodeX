@@ -1,0 +1,21 @@
+# Compiled programs and intermediate files
+*.exe
+*.o
+*.obj
+*.out
+*.pdb
+*.ilk
+*.a
+*.lib
+
+# CMake build directories
+/build/
+/cmake-build-*/
+
+# Local IDE and contest-tool settings
+/.idea/
+/.autocp
+
+# Local teaching instructions and learner records
+/AGENTS.md
+/LEARNER_PROFILE.md
