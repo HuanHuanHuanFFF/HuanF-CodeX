@@ -1,5 +1,7 @@
 # HuanF-CodeX
 
+当前学习与复习记录：[Learning](Learning/README.md)。
+
 ### 比较个性化的算法模板,以及一些简单的markdown笔记(主要由AI生成),相关算法题的AC代码
 
 ### 现在起将使用ChatGPT-o3严格遵循奥卡姆剃刀原则和模块化生成笔记
