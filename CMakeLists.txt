@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# 编译产物集中到已被 Git 忽略的 build 目录。
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/bin")
+
 # 自动递归搜集本项目所有 .cpp（含子目录）
 file(GLOB_RECURSE PROJECT_SOURCES
         "${CMAKE_SOURCE_DIR}/*.cpp"

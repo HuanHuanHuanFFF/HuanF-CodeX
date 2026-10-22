@@ -8,14 +8,10 @@
 *.a
 *.lib
 
-# CMake build directories
+# Centralized executable output and build directories
 /build/
 /cmake-build-*/
 
 # Local IDE and contest-tool settings
 /.idea/
 /.autocp
-
-# Local teaching instructions and learner records
-/AGENTS.md
-/LEARNER_PROFILE.md
